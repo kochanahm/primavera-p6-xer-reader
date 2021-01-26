@@ -1,0 +1,667 @@
+{% extends "layout.html" %} {% block content %}
+
+<div id="example">
+  <div class="demo-section k-content wide">
+    <div id="toolbar"></div>
+    <div id="drawer">
+      <div id="drawer-content">
+        <div id="Statistics">
+          <div id="tilelayout"></div>
+
+          <!-- container text templates -->
+          <script id="data-date" type="text/x-kendo-template">
+            <h1>{{ prj_data_date }}</h1>
+            <h2></h2>
+            <h3>{{ prj_data_date_hr }}</h3>
+          </script>
+          <script id="start-date" type="text/x-kendo-template">
+            <h1>{{ prj_start_date }}</h1>
+            <h2></h2>
+            <h3>{{ prj_start_date_hr }}</h3>
+          </script>
+          <script id="end-date" type="text/x-kendo-template">
+            <h1>{{ prj_end_date }}</h1>
+            <h2></h2>
+            <h3>{{ prj_end_date_hr }}</h3>
+          </script>
+
+          <!-- container chart templates -->
+          <script id="task-status-chart-template" type="text/x-kendo-template">
+            <div id="task-status-chart" style="height:100%; width:100%"></div>
+          </script>
+          <script id="float-chart-template" type="text/x-kendo-template">
+            <div id="float-chart" style="height:100%; width:100%"></div>
+          </script>
+          <script
+            id="cost-progress-chart-template"
+            type="text/x-kendo-template"
+          >
+            <div id="cost-progress-chart" style="height:100%; width:100%"></div>
+          </script>
+          <script
+            id="labour-progress-chart-template"
+            type="text/x-kendo-template"
+          >
+            <div id="labour-progress-chart" style="height:100%; width:100%"></div>
+          </script>
+          <script
+            id="nonlabour-progress-chart-template"
+            type="text/x-kendo-template"
+          >
+            <div id="nonlabour-progress-chart" style="height:100%; width:100%"></div>
+          </script>
+
+          <!-- container grid templates -->
+          <script id="task-status-grid-template" type="text/x-kendo-template">
+            <div id="task-status-grid" style="height:100%;"></div>
+          </script>
+          <script id="task-type-grid-template" type="text/x-kendo-template">
+            <div id="task-type-grid" style="height:100%;"></div>
+          </script>
+          <script id="cost-grid-template" type="text/x-kendo-template">
+            <div id="cost-grid" style="height:100%;"></div>
+          </script>
+          <script id="labour-grid-template" type="text/x-kendo-template">
+            <div id="labour-grid" style="height:100%;"></div>
+          </script>
+          <script id="nonlabour-grid-template" type="text/x-kendo-template">
+            <div id="nonlabour-grid" style="height:100%;"></div>
+          </script>
+          <script id="float-grid-template" type="text/x-kendo-template">
+            <div id="float-grid" style="height:100%;"></div>
+          </script>
+
+          <script>
+            $("#tilelayout").kendoTileLayout({
+                containers: [{
+                    colSpan: 1,
+                    rowSpan: 1,
+                    header: {
+                        text: "Data Date"
+                    },
+                    bodyTemplate: kendo.template($("#data-date").html())
+                }, {
+                    colSpan: 1,
+                    rowSpan: 1,
+                    header: {
+                        text: "Start Date"
+                    },
+                    bodyTemplate: kendo.template($("#start-date").html())
+                }, {
+                    colSpan: 1,
+                    rowSpan: 1,
+                    header: {
+                        text: "End Date"
+                    },
+                    bodyTemplate: kendo.template($("#end-date").html())
+                }, {
+                    colSpan: 1,
+                    rowSpan: 1,
+                    header: {
+                        text: "Task Status Chart"
+                    },
+                    bodyTemplate: kendo.template($("#task-status-chart-template").html())
+                }, {
+                    colSpan: 2,
+                    rowSpan: 2,
+                    header: {
+                        text: "Float Distribution"
+                    },
+                    bodyTemplate: kendo.template($("#float-chart-template").html())
+                }, {
+                    colSpan: 1,
+                    rowSpan: 1,
+                    header: {
+                        text: "Progress (Cost)"
+                    },
+                    bodyTemplate: kendo.template($("#cost-progress-chart-template").html())
+                }, {
+                    colSpan: 1,
+                    rowSpan: 1,
+                    header: {
+                        text: "Progress (LU)"
+                    },
+                    bodyTemplate: kendo.template($("#labour-progress-chart-template").html())
+                }, {
+                    colSpan: 1,
+                    rowSpan: 1,
+                    header: {
+                        text: "Progress (NU)"
+                    },
+                    bodyTemplate: kendo.template($("#nonlabour-progress-chart-template").html())
+                }, {
+                    colSpan: 1,
+                    rowSpan: 1,
+                    header: {
+                        text: "Task Status"
+                    },
+                    bodyTemplate: kendo.template($("#task-status-grid-template").html())
+                }, {
+                    colSpan: 2,
+                    rowSpan: 2,
+                    header: {
+                        text: "Task Type"
+                    },
+                    bodyTemplate: kendo.template($("#task-type-grid-template").html())
+                }, {
+                    colSpan: 2,
+                    rowSpan: 2,
+                    header: {
+                        text: "Total Costs"
+                    },
+                    bodyTemplate: kendo.template($("#cost-grid-template").html())
+                }, {
+                    colSpan: 2,
+                    rowSpan: 2,
+                    header: {
+                        text: "Float Metrics"
+                    },
+                    bodyTemplate: kendo.template($("#float-grid-template").html())
+                }, {
+                    colSpan: 2,
+                    rowSpan: 2,
+                    header: {
+                        text: "Labour Units"
+                    },
+                    bodyTemplate: kendo.template($("#labour-grid-template").html())
+                }, {
+                    colSpan: 2,
+                    rowSpan: 2,
+                    header: {
+                        text: "Non-Labour Units"
+                    },
+                    bodyTemplate: kendo.template($("#nonlabour-grid-template").html())
+                }],
+                columns: 6,
+                columnsWidth: 300,
+                rowsHeight: 235,
+                reorderable: true,
+                resizable: true,
+                resize: function (e) {
+                    var rowSpan = e.container.css("grid-column-end");
+                    var chart = e.container.find(".k-chart").data("kendoChart");
+                    // hide chart labels when the space is limited
+                    if (rowSpan === "span 1" && chart) {
+                        chart.options.categoryAxis.labels.visible = false;
+                        chart.redraw();
+                    }
+                    // show chart labels when the space is enough
+                    if (rowSpan !== "span 1" && chart) {
+                        chart.options.categoryAxis.labels.visible = true;
+                        chart.redraw();
+                    }
+
+                    // for widgets that do not auto resize
+                    // https://docs.telerik.com/kendo-ui/styles-and-layout/using-kendo-in-responsive-web-pages
+                    kendo.resize(e.container, true);
+                }
+            });
+
+            var gridDs = new kendo.data.DataSource({
+                data: [
+                    {channel: "Organic Search", conversion: 8232, users: 70500},
+                    {channel: "Direct", conversion: 6574, users: 24900},
+                    {channel: "Referral", conversion: 4932, users: 20000},
+                    {channel: "Social Media", conversion: 2928, users: 19500},
+                    {channel: "Email", conversion: 2456, users: 18100},
+                    {channel: "Other", conversion: 1172, users: 16540},
+                ],
+                schema: {
+                    model: {
+                        fields: {
+                            conversion: {type: "number"},
+                            users: {type: "number"}
+                        }
+                    }
+                }
+            });
+
+            var task_status_data = {{ dict_task_status|tojson|safe }};
+            var task_status_DataSource = new kendo.data.DataSource({
+                data: task_status_data
+            });
+
+            $("#task-status-grid").kendoGrid({
+                dataSource: task_status_DataSource,
+                columns: [{
+                    field: "Status", title: "Status", width: 100
+                }, {
+                    field: "Count", title: "Count", width: 80
+                }],
+            });
+
+            var task_type_data = {{ dict_task_types|tojson|safe }};
+
+            $("#task-type-grid").kendoGrid({
+                columns: [{
+                    field: "Type", title: "Type", width: 100
+                }, {
+                    field: "Count", title: "Count", width: 80, footerTemplate: "Sum: #: sum #"
+                }],
+                dataSource: {
+                    data: task_type_data,
+                    aggregate: [
+                        {field: "Count", aggregate: "sum"}
+                    ]
+                }
+            });
+
+            var sm_cost_data = {{ dict_sm_costs|tojson|safe }};
+            var sm_cost_DataSource = new kendo.data.DataSource({
+                data: sm_cost_data
+            });
+
+            $("#cost-grid").kendoGrid({
+                dataSource: sm_cost_DataSource,
+                columns: [{
+                    field: "Title", title: "Title", width: 100
+                }, {
+                    field: "Cost", title: "Cost", format: "{0:0,0.00}", width: 80
+                }]
+            });
+
+            var sm_labour_data = {{ dict_sm_labours|tojson|safe }};
+            var sm_labour_DataSource = new kendo.data.DataSource({
+                data: sm_labour_data
+            });
+
+            $("#labour-grid").kendoGrid({
+                dataSource: sm_labour_DataSource,
+                columns: [{
+                    field: "Title", title: "Title", width: 100
+                }, {
+                    field: "Labour_Units", title: "Labour Units", format: "{0:0,0.00}", width: 80
+                }]
+            });
+
+            var sm_nonlabour_data = {{ dict_sm_nonlabours|tojson|safe }};
+            var sm_nonlabour_DataSource = new kendo.data.DataSource({
+                data: sm_nonlabour_data
+            });
+
+            $("#nonlabour-grid").kendoGrid({
+                dataSource: sm_nonlabour_DataSource,
+                columns: [{
+                    field: "Title", title: "Title", width: 100
+                }, {
+                    field: "Nonlabour_Units", title: "Non-Labour Units", format: "{0:0,0.00}", width: 80
+                }]
+            });
+
+            var cnt_float_data = {{ dict_float_metrics|tojson|safe }};
+            var cnt_float_DataSource = new kendo.data.DataSource({
+                data: cnt_float_data
+            });
+
+            $("#float-grid").kendoGrid({
+                dataSource: cnt_float_DataSource,
+                columns: [{
+                    field: "Title", title: "Title", width: 100
+                }, {
+                    field: "Count", title: "Count", width: 80
+                }]
+            });
+
+            var cnt_float_dist_data = {{ dict_float_dist|tojson|safe }};
+            var cnt_float_dist_DataSource = new kendo.data.DataSource({
+                data: cnt_float_dist_data
+            });
+
+            function createCharts() {
+                var showLabels = $(document).width() > 677;
+
+                $("#float-chart").kendoChart({
+                    dataSource: cnt_float_dist_DataSource,
+                    legend: {
+                        visible: false
+                    },
+                    seriesDefaults: {
+                        type: "area",
+                        style: "smooth",
+                        markers: {
+                            visible: false
+                        }
+                    },
+                    series: [{
+                        field: "Count",
+                        categoryField: "FloatRange"
+                    }],
+                    valueAxis: {
+                        line: {
+                            width: 0
+                        },
+                        labels: {
+                            step: 2
+                        }
+                        //min: 0,
+                        //max: 50000,
+                    },
+                    categoryAxis: {
+                        baseUnit: "fit",
+                        labels: {
+                            rotation: "auto",
+                            //format: "{0:d MMMM}",
+                            visible: showLabels
+                        },
+                        majorGridLines: {
+                            visible: false
+                        },
+                        majorTicks: {
+                            visible: false
+                        }
+                    },
+                    tooltip: {
+                        visible: true,
+                        format: "{0}%",
+                        template: "No. of Activities: #= value #"
+                    }
+                });
+
+                $("#task-status-chart").kendoChart({
+                    dataSource: task_status_DataSource,
+                    legend: {
+                        visible: false
+                    },
+                    seriesDefaults: {
+                        type: "column",
+                        labels: {
+                            visible: true,
+                            background: "transparent"
+                        }
+                    },
+                    series: [{
+                        field: "Count",
+                        categoryField: "Status",
+                        //colorField: "userColor"
+                    }],
+                    valueAxis: {
+                        line: {
+                            width: 0
+                        },
+                        labels: {
+                            step: 5
+                        },
+                        majorGridLines: {
+                            visible: false
+                        },
+                        visible: false
+                    },
+                    categoryAxis: {
+                        labels: {
+                            rotation: "auto",
+                            visible: showLabels
+                        },
+                        majorGridLines: {
+                            visible: false
+                        },
+                        majorTicks: {
+                            visible: false
+                        }
+                    }
+                });
+
+                var act_cost_val = {{ my_cost_progress[0] }};
+                var rem_cost_val = {{ my_cost_progress[1] }};
+
+                $("#cost-progress-chart").kendoChart({
+                    dataSource: {
+                        data: [
+                            {value: act_cost_val.toFixed(2), type: "A"},
+                            {value: rem_cost_val.toFixed(2), type: "R"},
+                        ]
+                    },
+                    chartArea: {
+                        margin: 20
+                    },
+                    series: [{
+                        type: "donut",
+                        field: "value",
+                        categoryField: "type",
+                        startAngle: 90,
+                        holeSize: 20,
+                        labels: {
+                            visible: true,
+                            background: "transparent",
+                            position: "outsideEnd",
+                            template: "#=category #: #= value#%"
+                        }
+                    }],
+                    legend: {
+                        visible: false
+                        }
+                });
+
+                var act_lab_val = {{ my_labour_progress[0] }};
+                var rem_lab_val = {{ my_labour_progress[1] }};
+
+                $("#labour-progress-chart").kendoChart({
+                    dataSource: {
+                        data: [
+                            {value: act_lab_val.toFixed(2), type: "A"},
+                            {value: rem_lab_val.toFixed(2), type: "R"},
+                        ]
+                    },
+                    chartArea: {
+                        margin: 20
+                    },
+                    series: [{
+                        type: "donut",
+                        field: "value",
+                        categoryField: "type",
+                        startAngle: 90,
+                        holeSize: 20,
+                        labels: {
+                            visible: true,
+                            background: "transparent",
+                            position: "outsideEnd",
+                            template: "#=category #: #= value#%"
+                        }
+                    }],
+                    legend: {
+                        visible: false
+                    }
+                });
+
+                var act_nonlab_val = {{ my_nonlabour_progress[0] }};
+                var rem_nonlab_val = {{ my_nonlabour_progress[1] }};
+
+                $("#nonlabour-progress-chart").kendoChart({
+                    dataSource: {
+                        data: [
+                            {value: act_nonlab_val.toFixed(2), type: "A"},
+                            {value: rem_nonlab_val.toFixed(2), type: "R"},
+                        ]
+                    },
+                    chartArea: {
+                        margin: 20
+                    },
+                    series: [{
+                        type: "donut",
+                        field: "value",
+                        categoryField: "type",
+                        startAngle: 90,
+                        holeSize: 20,
+                        labels: {
+                            visible: true,
+                            background: "transparent",
+                            position: "outsideEnd",
+                            template: "#=category #: #= value#%"
+                        }
+                    }],
+                    legend: {
+                        visible: false
+                    }
+                });
+
+                kendo.resize($(".k-grid"));
+            }
+
+            $(document).ready(createCharts);
+            $(document).bind("kendo:skinChange", createCharts);
+
+            $(window).on("resize", function () {
+                kendo.resize($(".k-chart"));
+            });
+          </script>
+        </div>
+        <div id="Diagnostics" class="hidden">
+          <div id="taskGrid"></div>
+
+          <script>
+
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var FS_links_data = {{ dict_FS_links|tojson|safe }};
+                var FS_links_DataSource = new kendo.data.DataSource({
+                    data: FS_links_data,
+                    pageSize: 50
+                });
+
+                $("#taskGrid").kendoGrid({
+                    dataSource: FS_links_DataSource,
+                    height: 800,
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    columns: [{
+                        field: "task_code",
+                        title: "Task ID",
+                        width: 100
+                    }, {
+                        field: "task_name",
+                        title: "Task Name",
+                        width: 100
+                    }]
+                });
+
+            })
+          </script>
+        </div>
+        <div id="Calendar" class="hidden">
+          <ul>
+            <li>
+              <h6>11/5 Monday</h6>
+              <p>Martha Birthday</p>
+            </li>
+            <li>
+              <h6>15/6 Sunday</h6>
+              <p>Job interview for internal position</p>
+            </li>
+          </ul>
+        </div>
+        <div id="Attachments" class="hidden">
+          <ul>
+            <li>Build enterprise apps</li>
+            <li>Fw: Regarding Multiline textbox</li>
+            <li>Away next week</li>
+            <li>Fw: Your Costume is ready</li>
+            <li>Update completed</li>
+          </ul>
+        </div>
+        <div id="Favourites" class="hidden">
+          <ul>
+            <li>90% Discount!</li>
+            <li>90% Discount!</li>
+            <li>One time offer!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $("#drawer").kendoDrawer({
+        template:
+          "<ul> \
+                            <li data-role='drawer-item' class='k-state-selected'><span class='k-icon k-i-inbox'></span><span class='k-item-text'>Statistics</span></li> \
+                            <li data-role='drawer-separator'></li> \
+                            <li data-role='drawer-item'><span class='k-icon k-i-notification k-i-bell'></span><span class='k-item-text'>Diagnostics</span></li> \
+                            <li data-role='drawer-item'><span class='k-icon k-i-calendar'></span><span class='k-item-text'>Calendar</span></li> \
+                            <li data-role='drawer-separator'></li> \
+                            <li data-role='drawer-item'><span class='k-icon k-i-hyperlink-email'></span><span class='k-item-text'>Attachments</span></li> \
+                            <li data-role='drawer-item'><span class='k-icon k-i-star-outline k-i-bookmark-outline'></span><span class='k-item-text'>Favourites</span></li> \
+                          </ul>",
+        mode: "push",
+        mini: true,
+        itemClick: function (e) {
+          if (!e.item.hasClass("k-drawer-separator")) {
+            e.sender.drawerContainer
+              .find("#drawer-content > div")
+              .addClass("hidden");
+            e.sender.drawerContainer
+              .find("#drawer-content")
+              .find("#" + e.item.find(".k-item-text").text())
+              .removeClass("hidden");
+          }
+        },
+        position: "left",
+        minHeight: 330,
+        swipeToOpen: true,
+      });
+    });
+
+    function toggleDrawer() {
+      var drawerInstance = $("#drawer").data().kendoDrawer;
+      var drawerContainer = drawerInstance.drawerContainer;
+
+      if (drawerContainer.hasClass("k-drawer-expanded")) {
+        drawerInstance.hide();
+      } else {
+        drawerInstance.show();
+      }
+    }
+
+    $("#toolbar").kendoToolBar({
+      items: [
+        {
+          type: "button",
+          icon: "menu",
+          attributes: { class: "k-flat" },
+          click: toggleDrawer,
+        },
+        { template: "<h3 style='margin-left: 20px;'>Schedule Manager</h3>" },
+      ],
+    });
+  </script>
+  <style>
+    body {
+      font-family: "Lato", sans-serif;
+    }
+
+    #drawer-content li {
+      font-size: 1.2em;
+      padding-left: 0.89em;
+      background: 0 0;
+      border-radius: 0;
+      border-width: 0 0 1px;
+      border-color: rgba(33, 37, 41, 0.125);
+      border-style: solid;
+      line-height: 1.5em;
+      padding: 1.09em 0.84em 1.23em 0.84em;
+    }
+
+    #drawer-content li:last-child {
+      border: 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .k-toolbar .k-icon {
+      font-size: 18px;
+    }
+
+    .k-card-header {
+      flex: 0 0 auto;
+    }
+
+    .k-card-body {
+      overflow: hidden;
+    }
+  </style>
+</div>
+
+{% endblock content %}

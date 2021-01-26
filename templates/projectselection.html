@@ -1,0 +1,100 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+ <div class="jumbotron text-center">
+  <div class="container">
+
+    <h2>Select your project</h2>
+
+  </div>
+</div>
+
+ <div id='multi_proj_selection'>
+
+
+
+            <div id='multiproj_form'>
+                <p>
+                    <form action="/navpanel" method="post">
+                      <input name="project_selector" id="project_selector" placeholder="Select Project..." style="width: 100%;" />
+                      <input type="submit" value="Go to Dashboard" id="multiproj" > </input>
+                    </form>
+                </p>
+            </div>
+
+            <script>
+
+                var project_list_data = {{ dict_project_list|tojson|safe }};
+                var project_list_DataSource = new kendo.data.DataSource({
+                    data: project_list_data
+                });
+
+                $(document).ready(function() {
+                    // create ComboBox from input HTML element
+                    $("#project_selector").kendoMultiColumnComboBox({
+                        dataTextField: "wbs_short_name",
+                        dataValueField: "proj_id",
+                        dataSource: project_list_DataSource,
+                        columns: [
+                            { field: "wbs_short_name", title: "Project Code", width: 250},
+                            { field: "wbs_name", title: "Project Name" }
+                        ],
+                        filter: "contains",
+                        suggest: true,
+                        index: 0,
+                        clearButton: false
+                    });
+                });
+            </script>
+
+        </div>
+
+    <style>
+
+        html { width: 100%; height:100%; overflow:hidden; font-family: 'Lato', sans-serif;}
+
+        body {
+            width: 100%;
+            height:100%;
+            background: #092756;
+            background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%),-moz-linear-gradient(top,  rgba(57,173,219,.25) 0%, rgba(42,60,87,.4) 100%), -moz-linear-gradient(-45deg,  #670d10 0%, #092756 100%);
+            background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg,  #670d10 0%,#092756 100%);
+            background: -o-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -o-linear-gradient(top,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -o-linear-gradient(-45deg,  #670d10 0%,#092756 100%);
+            background: -ms-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -ms-linear-gradient(top,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -ms-linear-gradient(-45deg,  #670d10 0%,#092756 100%);
+            background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), linear-gradient(to bottom,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), linear-gradient(135deg,  #670d10 0%,#092756 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3E1D6D', endColorstr='#092756',GradientType=1 );
+        }
+
+        #multi_proj_selection {
+            width: 1000px;
+            margin: 0 auto;
+        }
+        .jumbotron{
+            margin-top: 100px;
+            margin-bottom: 50px;
+            background-color: transparent;
+        }
+        .jumbotron h2 {
+            color: #FF5733;
+            text-align: center;
+        }
+
+        .jumbotron p {
+            color: #FFFFFF;
+            text-align: center;
+        }
+
+        #multiproj {
+            margin: 0 auto;
+            display: block;
+            margin-top: 100px;
+            min-width: 150px;
+            min-height: 50px;
+            font-size: 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-family: 'Lato', sans-serif;
+        }
+
+    </style>
+{% endblock content %}
