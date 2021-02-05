@@ -505,38 +505,98 @@
           </script>
         </div>
         <div id="Diagnostics" class="hidden">
-          <div id="taskGrid"></div>
-
+          <div class="demo-section k-content">
+            <div>
+              <div id="metric-toolbar"></div>
+            </div>
+            <div id="tabstrip">
+              <ul>
+                <li class="k-state-active">Task Metrics</li>
+                <li>Milestone Metrics</li>
+              </ul>
+              <!-- container grid templates -->
+              <script
+                id="task-metrics-grid-template"
+                type="text/x-kendo-template"
+              >
+                <div id="task-metrics-grid" style="height:100%;"></div>
+              </script>
+              <script
+                id="mil-metrics-grid-template"
+                type="text/x-kendo-template"
+              >
+                <div id="mil-metrics-grid" style="height:100%;"></div>
+              </script>
+              <div>
+                <div id="task-metrics-grid"></div>
+              </div>
+              <div>
+                <div id="mil-metrics-grid"></div>
+              </div>
+            </div>
+          </div>
           <script>
-
+            $(document).ready(function () {
+              $("#metric-toolbar").kendoToolBar({
+                items: [
+                  { type: "button", text: "Task Metrics Detail List" },
+                  { type: "button", text: "Milestone Metrics Detail List" },
+                ],
+              });
+            });
+          </script>
+          <script>
             $(function () {
 
                 $("#kendoVersion").text(kendo.version);
 
-                var FS_links_data = {{ dict_FS_links|tojson|safe }};
-                var FS_links_DataSource = new kendo.data.DataSource({
-                    data: FS_links_data,
+                var Task_Metrics_data = {{ dict_Task_Metrics|tojson|safe }};
+                var Task_Metrics_DataSource = new kendo.data.DataSource({
+                    data: Task_Metrics_data,
                     pageSize: 50
                 });
 
-                $("#taskGrid").kendoGrid({
-                    dataSource: FS_links_DataSource,
+                $("#task-metrics-grid").kendoGrid({
+                    dataSource: Task_Metrics_DataSource,
                     height: 800,
                     pageable: true,
                     sortable: true,
                     filterable: true,
                     columns: [{
-                        field: "task_code",
-                        title: "Task ID",
+                        field: "Metric",
+                        title: "Metric",
                         width: 100
                     }, {
-                        field: "task_name",
-                        title: "Task Name",
+                        field: "Count",
+                        title: "Count",
                         width: 100
                     }]
                 });
 
-            })
+                var Mil_Metrics_data = {{ dict_Mil_Metrics|tojson|safe }};
+                var Mil_Metrics_DataSource = new kendo.data.DataSource({
+                    data: Mil_Metrics_data,
+                    pageSize: 50
+                });
+
+                $("#mil-metrics-grid").kendoGrid({
+                    dataSource: Mil_Metrics_DataSource,
+                    height: 800,
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    columns: [{
+                        field: "Metric",
+                        title: "Metric",
+                        width: 100
+                    }, {
+                        field: "Count",
+                        title: "Count",
+                        width: 100
+                    }]
+                });
+
+            });
           </script>
         </div>
         <div id="Calendar" class="hidden">
@@ -570,98 +630,125 @@
       </div>
     </div>
   </div>
-  <script>
-    $(document).ready(function () {
-      $("#drawer").kendoDrawer({
-        template:
-          "<ul> \
-                            <li data-role='drawer-item' class='k-state-selected'><span class='k-icon k-i-inbox'></span><span class='k-item-text'>Statistics</span></li> \
-                            <li data-role='drawer-separator'></li> \
-                            <li data-role='drawer-item'><span class='k-icon k-i-notification k-i-bell'></span><span class='k-item-text'>Diagnostics</span></li> \
-                            <li data-role='drawer-item'><span class='k-icon k-i-calendar'></span><span class='k-item-text'>Calendar</span></li> \
-                            <li data-role='drawer-separator'></li> \
-                            <li data-role='drawer-item'><span class='k-icon k-i-hyperlink-email'></span><span class='k-item-text'>Attachments</span></li> \
-                            <li data-role='drawer-item'><span class='k-icon k-i-star-outline k-i-bookmark-outline'></span><span class='k-item-text'>Favourites</span></li> \
-                          </ul>",
-        mode: "push",
-        mini: true,
-        itemClick: function (e) {
-          if (!e.item.hasClass("k-drawer-separator")) {
-            e.sender.drawerContainer
-              .find("#drawer-content > div")
-              .addClass("hidden");
-            e.sender.drawerContainer
-              .find("#drawer-content")
-              .find("#" + e.item.find(".k-item-text").text())
-              .removeClass("hidden");
-          }
-        },
-        position: "left",
-        minHeight: 330,
-        swipeToOpen: true,
-      });
-    });
-
-    function toggleDrawer() {
-      var drawerInstance = $("#drawer").data().kendoDrawer;
-      var drawerContainer = drawerInstance.drawerContainer;
-
-      if (drawerContainer.hasClass("k-drawer-expanded")) {
-        drawerInstance.hide();
-      } else {
-        drawerInstance.show();
-      }
-    }
-
-    $("#toolbar").kendoToolBar({
-      items: [
-        {
-          type: "button",
-          icon: "menu",
-          attributes: { class: "k-flat" },
-          click: toggleDrawer,
-        },
-        { template: "<h3 style='margin-left: 20px;'>Schedule Manager</h3>" },
-      ],
-    });
-  </script>
-  <style>
-    body {
-      font-family: "Lato", sans-serif;
-    }
-
-    #drawer-content li {
-      font-size: 1.2em;
-      padding-left: 0.89em;
-      background: 0 0;
-      border-radius: 0;
-      border-width: 0 0 1px;
-      border-color: rgba(33, 37, 41, 0.125);
-      border-style: solid;
-      line-height: 1.5em;
-      padding: 1.09em 0.84em 1.23em 0.84em;
-    }
-
-    #drawer-content li:last-child {
-      border: 0;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .k-toolbar .k-icon {
-      font-size: 18px;
-    }
-
-    .k-card-header {
-      flex: 0 0 auto;
-    }
-
-    .k-card-body {
-      overflow: hidden;
-    }
-  </style>
 </div>
+<script>
+  $(document).ready(function () {
+    $("#drawer").kendoDrawer({
+      template:
+        "<ul> \
+                <li data-role='drawer-item' class='k-state-selected'><span class='k-icon k-i-inbox'></span><span class='k-item-text'>Statistics</span></li> \
+                <li data-role='drawer-separator'></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-notification k-i-bell'></span><span class='k-item-text'>Diagnostics</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-calendar'></span><span class='k-item-text'>Calendar</span></li> \
+                <li data-role='drawer-separator'></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-hyperlink-email'></span><span class='k-item-text'>Attachments</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-star-outline k-i-bookmark-outline'></span><span class='k-item-text'>Favourites</span></li> \
+              </ul>",
+      mode: "push",
+      mini: true,
+      itemClick: function (e) {
+        if (!e.item.hasClass("k-drawer-separator")) {
+          e.sender.drawerContainer
+            .find("#drawer-content > div")
+            .addClass("hidden");
+          e.sender.drawerContainer
+            .find("#drawer-content")
+            .find("#" + e.item.find(".k-item-text").text())
+            .removeClass("hidden");
+        }
+      },
+      position: "left",
+      minHeight: 330,
+      swipeToOpen: true,
+    });
+  });
 
+  function toggleDrawer() {
+    var drawerInstance = $("#drawer").data().kendoDrawer;
+    var drawerContainer = drawerInstance.drawerContainer;
+
+    if (drawerContainer.hasClass("k-drawer-expanded")) {
+      drawerInstance.hide();
+    } else {
+      drawerInstance.show();
+    }
+  }
+
+  $("#toolbar").kendoToolBar({
+    items: [
+      {
+        type: "button",
+        icon: "menu",
+        attributes: { class: "k-flat" },
+        click: toggleDrawer,
+      },
+      { template: "<h3 style='margin-left: 20px;'>Schedule Manager</h3>" },
+    ],
+  });
+
+  $(document).ready(function () {
+    $("#tabstrip").kendoTabStrip();
+  });
+</script>
+<style>
+  body {
+    font-family: "Lato", sans-serif;
+  }
+
+  #drawer-content li {
+    font-size: 1.2em;
+    padding-left: 0.89em;
+    background: 0 0;
+    border-radius: 0;
+    border-width: 0 0 1px;
+    border-color: rgba(33, 37, 41, 0.125);
+    border-style: solid;
+    line-height: 1.5em;
+    padding: 1.09em 0.84em 1.23em 0.84em;
+  }
+
+  #drawer-content li:last-child {
+    border: 0;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .k-toolbar .k-icon {
+    font-size: 18px;
+  }
+
+  .k-card-header {
+    flex: 0 0 auto;
+  }
+
+  .k-card-body {
+    overflow: hidden;
+  }
+
+  #tabstrip {
+    padding: 8px;
+    margin: 8px;
+    border: 0;
+    background: none;
+  }
+
+  #tabstrip .k-tabstrip- {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  #tabstrip .k-state-active {
+    padding: 0;
+    background-color: #ededed;
+  }
+
+  #metric-toolbar {
+    background: none;
+    border: 0;
+    margin-left: 8px;
+  }
+</style>
 {% endblock content %}

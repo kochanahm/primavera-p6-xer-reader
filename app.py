@@ -41,7 +41,8 @@ def navpanel():
     dict_sm_nonlabours = modules.calcStatistics.create_nonlabunits_table()
     dict_float_metrics = modules.calcStatistics.create_float_table()[0]
     dict_float_dist = modules.calcStatistics.create_float_table()[1]
-    dict_FS_links = modules.calcDiagnostics.count_link_types()
+    dict_Task_Metrics = modules.calcDiagnostics.funcDiagnostics()[0]
+    dict_Mil_Metrics = modules.calcDiagnostics.funcDiagnostics()[1]
 
     if (dict_sm_costs[3]['Cost']) == 0:
         my_cost_progress = [0, 100]
@@ -61,15 +62,26 @@ def navpanel():
         my_nonlabour_progress = [(dict_sm_nonlabours[1]['Nonlabour_Units'] / (dict_sm_nonlabours[3]['Nonlabour_Units']))*100,
                                  (dict_sm_nonlabours[2]['Nonlabour_Units'] / (dict_sm_nonlabours[3]['Nonlabour_Units']))*100]
 
-    return render_template('navpanel.html', prj_data_date=prj_data_date, prj_start_date=prj_start_date,
-                           prj_end_date=prj_end_date, prj_data_date_hr=prj_data_date_hr,
-                           prj_start_date_hr=prj_start_date_hr, prj_end_date_hr=prj_end_date_hr,
-                           dict_task_status=dict_task_status, dict_task_types=dict_task_types,
-                           dict_sm_costs=dict_sm_costs, dict_sm_labours=dict_sm_labours,
-                           dict_sm_nonlabours=dict_sm_nonlabours, dict_float_metrics=dict_float_metrics,
-                           dict_float_dist=dict_float_dist, selected_project_id=selected_project_id,
-                           my_cost_progress=my_cost_progress, my_labour_progress=my_labour_progress,
-                           my_nonlabour_progress=my_nonlabour_progress, dict_FS_links=dict_FS_links)
+    return render_template('navpanel.html', 
+    prj_data_date=prj_data_date,
+    prj_start_date=prj_start_date,
+    prj_end_date=prj_end_date,
+    prj_data_date_hr=prj_data_date_hr,
+    prj_start_date_hr=prj_start_date_hr,
+    prj_end_date_hr=prj_end_date_hr,
+    dict_task_status=dict_task_status,
+    dict_task_types=dict_task_types,
+    dict_sm_costs=dict_sm_costs,
+    dict_sm_labours=dict_sm_labours,
+    dict_sm_nonlabours=dict_sm_nonlabours,
+    dict_float_metrics=dict_float_metrics,
+    dict_float_dist=dict_float_dist,
+    selected_project_id=selected_project_id,
+    my_cost_progress=my_cost_progress,
+    my_labour_progress=my_labour_progress,
+    my_nonlabour_progress=my_nonlabour_progress,
+    dict_Task_Metrics=dict_Task_Metrics,
+    dict_Mil_Metrics=dict_Mil_Metrics)
 
 @app.route('/upload')
 def upload():
@@ -115,6 +127,8 @@ def graphviz():
     gp_final = modules.drawGraphviz.generateGraphviz(selected_start_task_int, selected_end_task_int)[0]
     cnt_total_paths = modules.drawGraphviz.generateGraphviz(selected_start_task_int, selected_end_task_int)[1]
     return render_template('graphviz.html', gp_final=gp_final, cnt_total_paths=cnt_total_paths)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

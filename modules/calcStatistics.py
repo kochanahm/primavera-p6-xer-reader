@@ -20,7 +20,7 @@ def find_data_date():
     prj_data_date_obj = datetime.datetime.strptime(prj_data_date_str, '%Y-%m-%d %H:%M')
     prj_data_date = prj_data_date_obj.strftime('%d-%b-%Y')
     prj_data_date_hr = prj_data_date_obj.strftime('%H:%M')
-    return prj_data_date, prj_data_date_hr
+    return prj_data_date, prj_data_date_hr, prj_data_date_obj
 
 
 # Find project start date
