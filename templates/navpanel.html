@@ -583,11 +583,13 @@
                     }, {
                         field: "Count",
                         title: "Count",
+                        attributes:{class:"gridnumbercolumn"},
                         width: 100
                     },{
                       field: "Percent",
                       title: "Percent",
                       format: "{0:p}",
+                      attributes:{class:"gridnumbercolumn"},
                       width: 100
                     },{
                       field: "Goal",
@@ -602,13 +604,10 @@
                 });
 
                 function onDataBound(e) {
-                  var grid = this;
+                  let grid = this;
                   grid.table.find("tr").each(function () {
-                      var dataItem = grid.dataItem(this);
-                      //var themeColor = dataItem.Remark ? 'success' : 'error';
-                      //var text = dataItem.Remark ? 'Looks good 👍' : 'Better to check 🧐';
-
-                      var themeColor = function () {
+                      let dataItem = grid.dataItem(this);
+                      let themeColor = (function() {
                         if (dataItem.Remark == 'Good') {
                           return 'success';
                         } else if (dataItem.Remark == 'Check') {
@@ -616,9 +615,9 @@
                         } else {
                           return 'warning';
                         }
-                      };
+                      })();
 
-                      var text = function () {
+                      let text = (function () {
                         if (dataItem.Remark == 'Good') {
                           return 'Looks good 👍'
                         } else if (dataItem.Remark == 'Check') {
@@ -626,7 +625,7 @@
                         } else {
                           return 'For information 🗨'
                         }
-                      };
+                      })();
 
                       $(this).find(".badgeTemplate").kendoBadge({
                           themeColor: themeColor,
@@ -637,28 +636,28 @@
               }
 
                 var Mil_Metrics_data = {{ dict_Mil_Metrics|tojson|safe }};
-                var Mil_Metrics_DataSource = new kendo.data.DataSource({
-                    data: Mil_Metrics_data,
-                    schema: {
-                      model: {
-                          fields: {
-                              Metric: { type: "string" },
-                              Count: { type: "number" },
-                              Goal: { type: "string" },
-                              Remark: { type: "string" }
-                          }
-                      }
-                    },
-                    pageSize: 50
-                });
 
                 $("#mil-metrics-grid").kendoGrid({
-                    dataSource: Mil_Metrics_DataSource,
+                    dataSource: {
+                      data: Mil_Metrics_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                Metric: { type: "string" },
+                                Count: { type: "number" },
+                                Goal: { type: "string" },
+                                Remark: { type: "string" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
                     toolbar: kendo.template($("#mmt-template").html()),
                     height: 800,
                     pageable: true,
                     sortable: true,
                     filterable: true,
+                    dataBound: onDataBound,
                     columns: [{
                       field: "Metric",
                       title: "Metric",
@@ -666,6 +665,7 @@
                   }, {
                       field: "Count",
                       title: "Count",
+                      attributes:{class:"gridnumbercolumn"},
                       width: 100
                   },{
                     field: "Goal",
@@ -674,6 +674,7 @@
                   },{
                     field: "Remark",
                     title: "Remark",
+                    template: "<span id='m_badge_#=Metric#' class='badgeTemplate'></span>",
                     width: 100
                   }]
                 });
@@ -846,6 +847,10 @@
   .toolbar {
     margin-left: auto;
     margin-right: 0;
+  }
+
+  .gridnumbercolumn {
+    text-align: right;
   }
 </style>
 {% endblock content %}
