@@ -515,6 +515,16 @@
                 <li>Milestone Metrics</li>
               </ul>
               <!-- container grid templates -->
+              <script type="text/x-kendo-template" id="tmt-template">
+                <div class="tmt-toolbar">
+                  <a href="\/task-metrics" target="_blank" id="tmt-category" class="k-button" style="width: 150px"><span class="k-icon k-i-aggregate-fields"></span>&nbspShow Details</a>
+                </div>
+              </script>
+              <script type="text/x-kendo-template" id="mmt-template">
+                <div class="mmt-toolbar">
+                  <a href="\/mil-metrics" target="_blank" id="mmt-category" class="k-button" style="width: 150px"><span class="k-icon k-i-aggregate-fields"></span>&nbspShow Details</a>
+                </div>
+              </script>
               <script
                 id="task-metrics-grid-template"
                 type="text/x-kendo-template"
@@ -535,16 +545,7 @@
               </div>
             </div>
           </div>
-          <script>
-            $(document).ready(function () {
-              $("#metric-toolbar").kendoToolBar({
-                items: [
-                  { type: "button", text: "Task Metrics Detail List" },
-                  { type: "button", text: "Milestone Metrics Detail List" },
-                ],
-              });
-            });
-          </script>
+
           <script>
             $(function () {
 
@@ -553,15 +554,28 @@
                 var Task_Metrics_data = {{ dict_Task_Metrics|tojson|safe }};
                 var Task_Metrics_DataSource = new kendo.data.DataSource({
                     data: Task_Metrics_data,
+                    schema: {
+                      model: {
+                          fields: {
+                              Metric: { type: "string" },
+                              Count: { type: "number" },
+                              Percent: { type: "number" },
+                              Goal: { type: "string" },
+                              Remark: { type: "string" }
+                          }
+                      }
+                    },
                     pageSize: 50
                 });
 
                 $("#task-metrics-grid").kendoGrid({
                     dataSource: Task_Metrics_DataSource,
+                    toolbar: kendo.template($("#tmt-template").html()),
                     height: 800,
                     pageable: true,
                     sortable: true,
                     filterable: true,
+                    dataBound: onDataBound,
                     columns: [{
                         field: "Metric",
                         title: "Metric",
@@ -570,30 +584,98 @@
                         field: "Count",
                         title: "Count",
                         width: 100
-                    }]
+                    },{
+                      field: "Percent",
+                      title: "Percent",
+                      format: "{0:p}",
+                      width: 100
+                    },{
+                      field: "Goal",
+                      title: "Goal",
+                      width: 100
+                    },{
+                      field: "Remark",
+                      title: "Remark",
+                      template: "<span id='badge_#=Metric#' class='badgeTemplate'></span>",
+                      width: 100
+                  }]
                 });
+
+                function onDataBound(e) {
+                  var grid = this;
+                  grid.table.find("tr").each(function () {
+                      var dataItem = grid.dataItem(this);
+                      //var themeColor = dataItem.Remark ? 'success' : 'error';
+                      //var text = dataItem.Remark ? 'Looks good 👍' : 'Better to check 🧐';
+
+                      var themeColor = function () {
+                        if (dataItem.Remark == 'Good') {
+                          return 'success';
+                        } else if (dataItem.Remark == 'Check') {
+                          return 'error';
+                        } else {
+                          return 'warning';
+                        }
+                      };
+
+                      var text = function () {
+                        if (dataItem.Remark == 'Good') {
+                          return 'Looks good 👍'
+                        } else if (dataItem.Remark == 'Check') {
+                          return 'Better to check 🧐'
+                        } else {
+                          return 'For information 🗨'
+                        }
+                      };
+
+                      $(this).find(".badgeTemplate").kendoBadge({
+                          themeColor: themeColor,
+                          text: text,
+                      });
+                      kendo.bind($(this), dataItem);
+                  });
+              }
 
                 var Mil_Metrics_data = {{ dict_Mil_Metrics|tojson|safe }};
                 var Mil_Metrics_DataSource = new kendo.data.DataSource({
                     data: Mil_Metrics_data,
+                    schema: {
+                      model: {
+                          fields: {
+                              Metric: { type: "string" },
+                              Count: { type: "number" },
+                              Goal: { type: "string" },
+                              Remark: { type: "string" }
+                          }
+                      }
+                    },
                     pageSize: 50
                 });
 
                 $("#mil-metrics-grid").kendoGrid({
                     dataSource: Mil_Metrics_DataSource,
+                    toolbar: kendo.template($("#mmt-template").html()),
                     height: 800,
                     pageable: true,
                     sortable: true,
                     filterable: true,
                     columns: [{
-                        field: "Metric",
-                        title: "Metric",
-                        width: 100
-                    }, {
-                        field: "Count",
-                        title: "Count",
-                        width: 100
-                    }]
+                      field: "Metric",
+                      title: "Metric",
+                      width: 100
+                  }, {
+                      field: "Count",
+                      title: "Count",
+                      width: 100
+                  },{
+                    field: "Goal",
+                    title: "Goal",
+                    width: 100
+                  },{
+                    field: "Remark",
+                    title: "Remark",
+                    width: 100
+                  }]
                 });
 
             });
@@ -745,10 +827,25 @@
     background-color: #ededed;
   }
 
-  #metric-toolbar {
-    background: none;
-    border: 0;
-    margin-left: 8px;
+  .k-grid-toolbar {
+    padding: 0.6em 1.3em 0.6em 0.4em;
+  }
+
+  .k-grid-toolbar .k-button {
+    float: right;
+  }
+
+  #tmt-category {
+    vertical-align: middle;
+  }
+
+  #mmt-category {
+    vertical-align: middle;
+  }
+
+  .toolbar {
+    margin-left: auto;
+    margin-right: 0;
   }
 </style>
 {% endblock content %}

@@ -68,7 +68,7 @@ def funcDiagnostics():
         df_IT = df.loc[(df['status_code'] != 'TK_Complete') & ((df['task_type'] == 'TT_Task') | (df['task_type'] == 'TT_Rsrc')), ['task_id','task_code', 'task_name', 'status_code','task_type']]
         return df_IT
 
-    def funcFilterIncompletedTasks(df):
+    def funcFilterIncompletedMilestones(df):
         df_IM = df.loc[(df['status_code'] != 'TK_Complete') & ((df['task_type'] == 'TT_FinMile') | (df['task_type'] == 'TT_Mile')), ['task_id','task_code', 'task_name', 'status_code','task_type']]
         return df_IM
 
@@ -83,7 +83,7 @@ def funcDiagnostics():
     ## Filter for only Incompleted Tasks. This is the dataframe for Incompleted Tasks
     df_Missing_Pred_IT = funcFilterIncompletedTasks(df_Missing_Pred)
     ## Filter for only Incompleted Milestones. This is the dataframe for Incompleted Milestones
-    df_Missing_Pred_IM = funcFilterIncompletedTasks(df_Missing_Pred)
+    df_Missing_Pred_IM = funcFilterIncompletedMilestones(df_Missing_Pred)
     ## Count of All activities that have missing preds
     cnt_Missing_Pred = len(df_Missing_Pred)
     ## Count of Incomplete Tasks that have missing preds
@@ -105,7 +105,7 @@ def funcDiagnostics():
     ## Filter for only Incompleted Tasks. This is the dataframe for Incompleted Tasks
     df_Missing_Suc_IT = funcFilterIncompletedTasks(df_Missing_Suc)
     ## Filter for only Incompleted Milestones. This is the dataframe for Incompleted Milestones
-    df_Missing_Suc_IM = funcFilterIncompletedTasks(df_Missing_Suc)
+    df_Missing_Suc_IM = funcFilterIncompletedMilestones(df_Missing_Suc)
     ## Count of All activities that have missing successors
     cnt_Missing_Suc = len(df_Missing_Suc)
     ## Count of Incomplete Tasks that have missing successors
@@ -123,7 +123,10 @@ def funcDiagnostics():
     
     #--- NEGATIVE LAGS ---
     ## Fiter negative lags for ALL activities regardles of activity status.
-    df_Negative_Lags = df_taskpred_task_3.loc[(df_taskpred_task_3['lag_day_cnt'] < 0), ['pred_task_code', 'pred_task_name', 'task_code', 'task_name', 'pred_type', 'lag_day_cnt','pred_status_code','status_code','pred_task_type','task_type']]
+    df_Negative_Lags_1 = df_taskpred_task_3.loc[(df_taskpred_task_3['lag_day_cnt'] < 0), ['pred_task_code', 'pred_task_name', 'task_code', 'task_name', 'pred_type', 'lag_day_cnt','pred_status_code','status_code','pred_task_type','task_type']]
+    # Drop duplicate tasks
+    df_Negative_Lags_sorted = df_Negative_Lags_1.sort_values(['task_code'], ascending = [True])
+    df_Negative_Lags = df_Negative_Lags_sorted.groupby('task_code').first().reset_index()
     ## Filter negative floats dataframe for Incompleted Tasks 
     df_Negative_Lags_IT = funcFilterIncompletedTaskLinks(df_Negative_Lags)
     ## Filter negative floats dataframe for Incompleted Milestones 
@@ -137,7 +140,10 @@ def funcDiagnostics():
 
     #--- POSITIVE LAGS ---
     ## Fiter Positive lags for ALL activities regardles of activity status.
-    df_Positive_Lags = df_taskpred_task_3.loc[(df_taskpred_task_3['lag_day_cnt'] > 0), ['pred_task_code', 'pred_task_name', 'task_code', 'task_name', 'pred_type', 'lag_day_cnt','pred_status_code','status_code','pred_task_type','task_type']]
+    df_Positive_Lags_1 = df_taskpred_task_3.loc[(df_taskpred_task_3['lag_day_cnt'] > 0), ['pred_task_code', 'pred_task_name', 'task_code', 'task_name', 'pred_type', 'lag_day_cnt','pred_status_code','status_code','pred_task_type','task_type']]
+    # Drop duplicate tasks
+    df_Positive_Lags_sorted = df_Positive_Lags_1.sort_values(['task_code'], ascending = [True])
+    df_Positive_Lags = df_Positive_Lags_sorted.groupby('task_code').first().reset_index()
     ## Filter Positive floats dataframe for Incompleted Tasks 
     df_Positive_Lags_IT = funcFilterIncompletedTaskLinks(df_Positive_Lags)
     ## Filter Positive floats dataframe for Incompleted Milestones 
@@ -322,37 +328,223 @@ def funcDiagnostics():
     ## Count of Incompleted tasks that have no assigned resources
     cnt_task_no_rsrc = len(df_task_no_rsrc)
 
-    dict_Task_Metrics = [{'Metric': 'Missing Predecessors', 'Count': cnt_Missing_Pred_IT},
-                       {'Metric': 'Missing Successors', 'Count': cnt_Missing_Suc_IT},
-                       {'Metric': 'Negative Lags', 'Count': cnt_Negative_Lags_IT},
-                       {'Metric': 'Positive Lags', 'Count': cnt_Positive_Lags_IT},
-                       {'Metric': 'FS Links', 'Count': cnt_FS_links_IT},
-                       {'Metric': 'SS-FF Links', 'Count': cnt_SS_FF_links_IT},
-                       {'Metric': 'SF Links', 'Count': cnt_SF_links_IT},
-                       {'Metric': 'Hard Constraints', 'Count': cnt_hard_const_IT},
-                       {'Metric': 'High Floats', 'Count': cnt_High_Floats_IT},
-                       {'Metric': 'Negative Floats', 'Count': cnt_Negative_Floats_IT},
-                       {'Metric': 'High Original Durations','Count': cnt_high_org_drt_IT},
-                       {'Metric': 'High Remaining Durations', 'Count': cnt_high_rem_drt_IT},
-                       {'Metric': 'Invalid Actual Start', 'Count': cnt_task_ias},
-                       {'Metric': 'Invalid Actual Finish', 'Count': cnt_task_iaf},
-                       {'Metric': 'Invalid Forecast Start', 'Count': cnt_task_ifs},
-                       {'Metric': 'Invalid Forecast Finish', 'Count': cnt_task_iff},
-                       {'Metric': 'No Assigned Resource','Count': cnt_task_no_rsrc}]
+    cnt_Total_Tasks_IT = len(funcFilterIncompletedTasks(df_task))
+    cnt_Total_Links_IT = len(funcFilterIncompletedTaskLinks(df_taskpred_task_3))
 
-    dict_Mil_Metrics = [{'Metric': 'Missing Predecessors', 'Count': cnt_Missing_Pred_IM},
-                       {'Metric': 'Missing Successors', 'Count': cnt_Missing_Suc_IM},
-                       {'Metric': 'Negative Lags', 'Count': cnt_Negative_Lags_IM},
-                       {'Metric': 'Positive Lags', 'Count': cnt_Positive_Lags_IM},
-                       {'Metric': 'FS Links', 'Count': cnt_FS_links_IM},
-                       {'Metric': 'SS-FF Links', 'Count': cnt_SS_FF_links_IM},
-                       {'Metric': 'SF Links', 'Count': cnt_SF_links_IM},
-                       {'Metric': 'Hard Constraints', 'Count': cnt_hard_const_IM},
-                       {'Metric': 'High Floats', 'Count': cnt_High_Floats_IM},
-                       {'Metric': 'Negative Floats', 'Count': cnt_Negative_Floats_IM},
-                       {'Metric': 'Invalid Actual Start', 'Count': cnt_mil_ias},
-                       {'Metric': 'Invalid Actual Finish', 'Count': cnt_mil_iaf},
-                       {'Metric': 'Invalid Forecast Start', 'Count': cnt_mil_ifs},
-                       {'Metric': 'Invalid Forecast Finish', 'Count': cnt_mil_iff}]
+    cnt_Total_Tasks_IM = len(funcFilterIncompletedMilestones(df_task))
+    cnt_Total_Links_IM = len(funcFilterIncompletedMilestoneLinks(df_taskpred_task_3))
+
+    percent_MP = 0 if cnt_Total_Tasks_IT==0 else cnt_Missing_Pred_IT/cnt_Total_Tasks_IT
+    percent_MS = 0 if cnt_Total_Tasks_IT==0 else cnt_Missing_Suc_IT/cnt_Total_Tasks_IT
+    percent_NL = 0 if cnt_Total_Tasks_IT==0 else cnt_Negative_Lags_IT/cnt_Total_Tasks_IT
+    percent_PL = 0 if cnt_Total_Tasks_IT==0 else cnt_Positive_Lags_IT/cnt_Total_Tasks_IT
+    percent_FS = 0 if cnt_Total_Links_IT==0 else cnt_FS_links_IT/cnt_Total_Links_IT
+    percent_SS_FF = 0 if cnt_Total_Links_IT==0 else cnt_SS_FF_links_IT/(2*cnt_Total_Links_IT)
+    percent_SF = 0 if cnt_Total_Links_IT==0 else cnt_SF_links_IT/cnt_Total_Links_IT
+    percent_HC = 0 if cnt_Total_Tasks_IT==0 else cnt_hard_const_IT/cnt_Total_Tasks_IT
+    percent_HF = 0 if cnt_Total_Tasks_IT==0 else cnt_High_Floats_IT/cnt_Total_Tasks_IT
+    percent_NF = 0 if cnt_Total_Tasks_IT==0 else cnt_Negative_Floats_IT/cnt_Total_Tasks_IT
+    percent_HOD = 0 if cnt_Total_Tasks_IT==0 else cnt_high_org_drt_IT/cnt_Total_Tasks_IT
+    percent_HRD = 0 if cnt_Total_Tasks_IT==0 else cnt_high_rem_drt_IT/cnt_Total_Tasks_IT
+    percent_IAS = 0 if cnt_Total_Tasks_IT==0 else cnt_task_ias/cnt_Total_Tasks_IT
+    percent_IAF = 0 if cnt_Total_Tasks_IT==0 else cnt_task_iaf/cnt_Total_Tasks_IT
+    percent_IFS = 0 if cnt_Total_Tasks_IT==0 else cnt_task_ifs/cnt_Total_Tasks_IT
+    percent_IFF = 0 if cnt_Total_Tasks_IT==0 else cnt_task_iff/cnt_Total_Tasks_IT
+    percent_NAR = 0 if cnt_Total_Tasks_IT==0 else cnt_task_no_rsrc/cnt_Total_Tasks_IT
+
+    # m_percent_MP = 0 if cnt_Total_Tasks_IM==0 else cnt_Missing_Pred_IM/cnt_Total_Tasks_IM
+    # m_percent_MS = 0 if cnt_Total_Tasks_IM==0 else cnt_Missing_Suc_IM/cnt_Total_Tasks_IM
+    # m_percent_NL = 0 if cnt_Total_Tasks_IM==0 else cnt_Negative_Lags_IM/cnt_Total_Tasks_IM
+    # m_percent_PL = 0 if cnt_Total_Tasks_IM==0 else cnt_Positive_Lags_IM/cnt_Total_Tasks_IM
+    # m_percent_FS = 0 if cnt_Total_Links_IM==0 else cnt_FS_links_IM/cnt_Total_Links_IM
+    # m_percent_SS_FF = 0 if cnt_Total_Links_IM==0 else cnt_SS_FF_links_IM/(2*cnt_Total_Links_IM)
+    # m_percent_SF = 0 if cnt_Total_Links_IM==0 else cnt_SF_links_IM/cnt_Total_Links_IM
+    # m_percent_HC = 0 if cnt_Total_Tasks_IM==0 else cnt_hard_const_IM/cnt_Total_Tasks_IM
+    # m_percent_HF = 0 if cnt_Total_Tasks_IM==0 else cnt_High_Floats_IM/cnt_Total_Tasks_IM
+    # m_percent_NF = 0 if cnt_Total_Tasks_IM==0 else cnt_Negative_Floats_IM/cnt_Total_Tasks_IM
+    # m_percent_IAS = 0 if cnt_Total_Tasks_IM==0 else cnt_mil_ias/cnt_Total_Tasks_IM
+    # m_percent_IAF = 0 if cnt_Total_Tasks_IM==0 else cnt_mil_iaf/cnt_Total_Tasks_IM
+    # m_percent_IFS = 0 if cnt_Total_Tasks_IM==0 else cnt_mil_ifs/cnt_Total_Tasks_IM
+    # m_percent_IFF = 0 if cnt_Total_Tasks_IM==0 else cnt_mil_iff/cnt_Total_Tasks_IM
+
+
+    dict_Task_Metrics = [
+        {'Metric': 'Missing Predecessors',
+         'Count': cnt_Missing_Pred_IT,
+         'Percent': percent_MP,
+         'Goal':'Less than 5%',
+         'Remark': 'Good' if percent_MP <= 0.05 else 'Check'
+         },
+        {'Metric': 'Missing Successors', 
+        'Count': cnt_Missing_Suc_IT,
+        'Percent': percent_MS,
+        'Goal':'Less than 5%',
+        'Remark': 'Good' if percent_MS <= 0.05 else 'Check'
+        },
+        {'Metric': 'Negative Lags', 
+        'Count': cnt_Negative_Lags_IT,
+        'Percent': percent_NL,
+        'Goal': '0',
+        'Remark': 'Good' if percent_NL == 0 else 'Check'
+        },
+        {'Metric': 'Positive Lags', 
+        'Count': cnt_Positive_Lags_IT,
+        'Percent': percent_PL,
+        'Goal':'Less than 5%',
+        'Remark': 'Good' if percent_PL <= 0.05 else 'Check'
+        },
+        {'Metric': 'FS Links', 
+        'Count': cnt_FS_links_IT,
+        'Percent': percent_FS,
+        'Goal':'Greater than 90%',
+        'Remark': 'Good' if percent_FS >= 0.90 else 'Check'
+        },
+        {'Metric': 'SS-FF Links', 
+        'Count': cnt_SS_FF_links_IT,
+        'Percent': percent_SS_FF,
+        'Goal':'Less than 10%',
+        'Remark': 'Good' if percent_SS_FF <= 0.10 else 'Check'
+        },
+        {'Metric': 'SF Links', 
+        'Count': cnt_SF_links_IT,
+        'Percent': percent_SF,
+        'Goal': '0',
+        'Remark': 'Good' if percent_SF == 0 else 'Check'
+        },
+        {'Metric': 'Hard Constraints', 
+        'Count': cnt_hard_const_IT,
+        'Percent': percent_HC,
+        'Goal':'Less than 5%',
+        'Remark': 'Good' if percent_HC <= 0.05 else 'Check'
+        },
+        {'Metric': 'High Floats', 
+        'Count': cnt_High_Floats_IT,
+        'Percent': percent_HF,
+        'Goal':'Less than 5%',
+        'Remark': 'Good' if percent_HF <= 0.05 else 'Check'
+        },
+        {'Metric': 'Negative Floats',
+         'Count': cnt_Negative_Floats_IT,
+         'Percent': percent_NF,
+         'Goal':'Less than 5%',
+         'Remark': 'Good' if percent_NF <= 0.05 else 'Check'
+         },
+        {'Metric': 'High Original Durations',
+        'Count': cnt_high_org_drt_IT,
+        'Percent': percent_HOD,
+        'Goal':'Less than 5%',
+        'Remark': 'Good' if percent_HOD <= 0.05 else 'Check'
+        },
+        {'Metric': 'High Remaining Durations', 
+        'Count': cnt_high_rem_drt_IT,
+        'Percent': percent_HRD,
+        'Goal':'Less than 5%',
+        'Remark': 'Good' if percent_HRD <= 0.05 else 'Check'
+        },
+        {'Metric': 'Invalid Actual Start',
+         'Count': cnt_task_ias,
+         'Percent': percent_IAS,
+         'Goal': '0',
+         'Remark': 'Good' if percent_IAS == 0 else 'Check'
+         },
+        {'Metric': 'Invalid Actual Finish', 
+        'Count': cnt_task_iaf,
+        'Percent': percent_IAF,
+        'Goal': '0',
+        'Remark': 'Good' if percent_IAF == 0 else 'Check'
+        },
+        {'Metric': 'Invalid Forecast Start', 
+        'Count': cnt_task_ifs,
+        'Percent': percent_IFS,
+        'Goal': '0',
+        'Remark': 'Good' if percent_IFS == 0 else 'Check'
+        },
+        {'Metric': 'Invalid Forecast Finish', 
+        'Count': cnt_task_iff,
+        'Percent': percent_IFF,
+        'Goal': '0',
+        'Remark': 'Good' if percent_IFF == 0 else 'Check'
+        },
+        {'Metric': 'No Assigned Resource',
+        'Count': cnt_task_no_rsrc,
+        'Percent': percent_NAR,
+        'Goal': '0',
+        'Remark': 'Good' if percent_NAR == 0 else 'Check'
+        }]
+
+    dict_Mil_Metrics = [
+        {'Metric': 'Missing Predecessors',
+         'Count': cnt_Missing_Pred_IM,
+         'Goal':'1 start milestone',
+         'Remark': 'Good' if cnt_Missing_Pred_IM <= 1 else 'Check'
+         },
+        {'Metric': 'Missing Successors', 
+        'Count': cnt_Missing_Suc_IM,
+        'Goal':'1 finish milestone',
+        'Remark': 'Good' if cnt_Missing_Suc_IM <= 1 else 'Check'
+        },
+        {'Metric': 'Negative Lags', 
+        'Count': cnt_Negative_Lags_IM,
+        'Goal': '0',
+        'Remark': 'Good' if cnt_Negative_Lags_IM == 0 else 'Check'
+        },
+        {'Metric': 'Positive Lags', 
+        'Count': cnt_Positive_Lags_IM,
+        'Goal':'Minimum as possible',
+        'Remark': "For Information"
+        },
+        {'Metric': 'FS Links', 
+        'Count': cnt_FS_links_IM,
+        'Goal':'Maximum as possible',
+        'Remark': "For Information"
+        },
+        {'Metric': 'SS-FF Links', 
+        'Count': cnt_SS_FF_links_IM,
+        'Goal':'Try to avoid over use',
+        'Remark': "For Information"
+        },
+        {'Metric': 'SF Links', 
+        'Count': cnt_SF_links_IM,
+        'Goal': 'Only if predecessor is start milestone',
+        'Remark': "For Information"
+        },
+        {'Metric': 'Hard Constraints', 
+        'Count': cnt_hard_const_IM,
+        'Goal':'Only contractual milestones',
+        'Remark': "For Information"
+        },
+        {'Metric': 'High Floats', 
+        'Count': cnt_High_Floats_IM,
+        'Goal':'Avoid high floats',
+        'Remark': "For Information"
+        },
+        {'Metric': 'Negative Floats',
+         'Count': cnt_Negative_Floats_IM,
+         'Goal': '0',
+         'Remark': 'Good' if cnt_Negative_Floats_IM == 0 else 'Check'
+         },
+        {'Metric': 'Invalid Actual Start',
+         'Count': cnt_mil_ias,
+         'Goal': '0',
+         'Remark': 'Good' if cnt_mil_ias == 0 else 'Check'
+         },
+        {'Metric': 'Invalid Actual Finish', 
+        'Count': cnt_mil_iaf,
+        'Goal': '0',
+        'Remark': 'Good' if cnt_mil_iaf == 0 else 'Check'
+        },
+        {'Metric': 'Invalid Forecast Start', 
+        'Count': cnt_mil_ifs,
+        'Goal': '0',
+        'Remark': 'Good' if cnt_mil_ifs == 0 else 'Check'
+        },
+        {'Metric': 'Invalid Forecast Finish', 
+        'Count': cnt_mil_iff,
+        'Goal': '0',
+        'Remark': 'Good' if cnt_mil_iff == 0 else 'Check'
+        }]
+    
+
+    dict_Task_Metrics_Detail = [{'Category': 'Missing Predecessors', 'Data': df_Missing_Pred_IT.to_dict(orient='records')}]
 
     return dict_Task_Metrics, dict_Mil_Metrics

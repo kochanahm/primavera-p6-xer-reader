@@ -128,7 +128,13 @@ def graphviz():
     cnt_total_paths = modules.drawGraphviz.generateGraphviz(selected_start_task_int, selected_end_task_int)[1]
     return render_template('graphviz.html', gp_final=gp_final, cnt_total_paths=cnt_total_paths)
 
+@app.route('/task-metrics')
+def task_metrics():
+    return render_template('task-metrics.html')
 
+@app.route('/mil-metrics')
+def mil_metrics():
+    return render_template('mil-metrics.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

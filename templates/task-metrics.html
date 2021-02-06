@@ -1,0 +1,129 @@
+{% extends "layout.html" %} {% block content %}
+
+<div id="example">
+  <div class="demo-section k-content wide">
+    <div id="toolbar"></div>
+    <div id="drawer">
+      <div id="drawer-content">
+        <div id="Calendar" class="hidden">
+          <ul>
+            <li>
+              <h6>11/5 Monday</h6>
+              <p>Martha Birthday</p>
+            </li>
+            <li>
+              <h6>15/6 Sunday</h6>
+              <p>Job interview for internal position</p>
+            </li>
+          </ul>
+        </div>
+        <div id="Attachments" class="hidden">
+          <ul>
+            <li>Build enterprise apps</li>
+            <li>Fw: Regarding Multiline textbox</li>
+            <li>Away next week</li>
+            <li>Fw: Your Costume is ready</li>
+            <li>Update completed</li>
+          </ul>
+        </div>
+        <div id="Favourites" class="hidden">
+          <ul>
+            <li>90% Discount!</li>
+            <li>90% Discount!</li>
+            <li>One time offer!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#drawer").kendoDrawer({
+      template:
+        "<ul> \
+                <li data-role='drawer-item'><span class='k-icon k-i-calendar'></span><span class='k-item-text'>Calendar</span></li> \
+                <li data-role='drawer-separator'></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-hyperlink-email'></span><span class='k-item-text'>Attachments</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-star-outline k-i-bookmark-outline'></span><span class='k-item-text'>Favourites</span></li> \
+              </ul>",
+      mode: "push",
+      mini: true,
+      itemClick: function (e) {
+        if (!e.item.hasClass("k-drawer-separator")) {
+          e.sender.drawerContainer
+            .find("#drawer-content > div")
+            .addClass("hidden");
+          e.sender.drawerContainer
+            .find("#drawer-content")
+            .find("#" + e.item.find(".k-item-text").text())
+            .removeClass("hidden");
+        }
+      },
+      position: "left",
+      minHeight: 330,
+      swipeToOpen: true,
+    });
+  });
+
+  function toggleDrawer() {
+    var drawerInstance = $("#drawer").data().kendoDrawer;
+    var drawerContainer = drawerInstance.drawerContainer;
+
+    if (drawerContainer.hasClass("k-drawer-expanded")) {
+      drawerInstance.hide();
+    } else {
+      drawerInstance.show();
+    }
+  }
+
+  $("#toolbar").kendoToolBar({
+    items: [
+      {
+        type: "button",
+        icon: "menu",
+        attributes: { class: "k-flat" },
+        click: toggleDrawer,
+      },
+      { template: "<h3 style='margin-left: 20px;'>Task Metrics</h3>" },
+    ],
+  });
+</script>
+<style>
+  body {
+    font-family: "Lato", sans-serif;
+  }
+
+  #drawer-content li {
+    font-size: 1.2em;
+    padding-left: 0.89em;
+    background: 0 0;
+    border-radius: 0;
+    border-width: 0 0 1px;
+    border-color: rgba(33, 37, 41, 0.125);
+    border-style: solid;
+    line-height: 1.5em;
+    padding: 1.09em 0.84em 1.23em 0.84em;
+  }
+
+  #drawer-content li:last-child {
+    border: 0;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .k-toolbar .k-icon {
+    font-size: 18px;
+  }
+
+  .k-card-header {
+    flex: 0 0 auto;
+  }
+
+  .k-card-body {
+    overflow: hidden;
+  }
+</style>
+{% endblock content %}
