@@ -197,25 +197,6 @@
                 }
             });
 
-            var gridDs = new kendo.data.DataSource({
-                data: [
-                    {channel: "Organic Search", conversion: 8232, users: 70500},
-                    {channel: "Direct", conversion: 6574, users: 24900},
-                    {channel: "Referral", conversion: 4932, users: 20000},
-                    {channel: "Social Media", conversion: 2928, users: 19500},
-                    {channel: "Email", conversion: 2456, users: 18100},
-                    {channel: "Other", conversion: 1172, users: 16540},
-                ],
-                schema: {
-                    model: {
-                        fields: {
-                            conversion: {type: "number"},
-                            users: {type: "number"}
-                        }
-                    }
-                }
-            });
-
             var task_status_data = {{ dict_task_status|tojson|safe }};
             var task_status_DataSource = new kendo.data.DataSource({
                 data: task_status_data
@@ -506,9 +487,6 @@
         </div>
         <div id="Diagnostics" class="hidden">
           <div class="demo-section k-content">
-            <div>
-              <div id="metric-toolbar"></div>
-            </div>
             <div id="tabstrip">
               <ul>
                 <li class="k-state-active">Task Metrics</li>
@@ -547,31 +525,30 @@
           </div>
 
           <script>
+
             $(function () {
 
                 $("#kendoVersion").text(kendo.version);
 
                 var Task_Metrics_data = {{ dict_Task_Metrics|tojson|safe }};
-                var Task_Metrics_DataSource = new kendo.data.DataSource({
-                    data: Task_Metrics_data,
-                    schema: {
-                      model: {
-                          fields: {
-                              Metric: { type: "string" },
-                              Count: { type: "number" },
-                              Percent: { type: "number" },
-                              Goal: { type: "string" },
-                              Remark: { type: "string" }
-                          }
-                      }
-                    },
-                    pageSize: 50
-                });
 
                 $("#task-metrics-grid").kendoGrid({
-                    dataSource: Task_Metrics_DataSource,
+                    dataSource: {
+                      data: Task_Metrics_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                Metric: { type: "string" },
+                                Count: { type: "number" },
+                                Percent: { type: "number" },
+                                Goal: { type: "string" },
+                                Remark: { type: "string" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
                     toolbar: kendo.template($("#tmt-template").html()),
-                    height: 800,
                     pageable: true,
                     sortable: true,
                     filterable: true,
@@ -603,81 +580,81 @@
                   }]
                 });
 
-                function onDataBound(e) {
-                  let grid = this;
-                  grid.table.find("tr").each(function () {
-                      let dataItem = grid.dataItem(this);
-                      let themeColor = (function() {
-                        if (dataItem.Remark == 'Good') {
-                          return 'success';
-                        } else if (dataItem.Remark == 'Check') {
-                          return 'error';
-                        } else {
-                          return 'warning';
-                        }
-                      })();
 
-                      let text = (function () {
-                        if (dataItem.Remark == 'Good') {
-                          return 'Looks good 👍'
-                        } else if (dataItem.Remark == 'Check') {
-                          return 'Better to check 🧐'
-                        } else {
-                          return 'For information 🗨'
-                        }
-                      })();
+              function onDataBound(e) {
+                let grid = this;
+                grid.table.find("tr").each(function () {
+                    let dataItem = grid.dataItem(this);
+                    let themeColor = (function() {
+                      if (dataItem.Remark == 'Good') {
+                        return 'success';
+                      } else if (dataItem.Remark == 'Check') {
+                        return 'error';
+                      } else {
+                        return 'warning';
+                      }
+                    })();
 
-                      $(this).find(".badgeTemplate").kendoBadge({
-                          themeColor: themeColor,
-                          text: text,
-                      });
-                      kendo.bind($(this), dataItem);
-                  });
-              }
+                    let text = (function () {
+                      if (dataItem.Remark == 'Good') {
+                        return 'Looks good 👍'
+                      } else if (dataItem.Remark == 'Check') {
+                        return 'Better to check 🧐'
+                      } else {
+                        return 'For information 🗨'
+                      }
+                    })();
 
-                var Mil_Metrics_data = {{ dict_Mil_Metrics|tojson|safe }};
-
-                $("#mil-metrics-grid").kendoGrid({
-                    dataSource: {
-                      data: Mil_Metrics_data,
-                      schema: {
-                        model: {
-                            fields: {
-                                Metric: { type: "string" },
-                                Count: { type: "number" },
-                                Goal: { type: "string" },
-                                Remark: { type: "string" }
-                            }
-                        }
-                      },
-                      pageSize: 50
-                    },
-                    toolbar: kendo.template($("#mmt-template").html()),
-                    height: 800,
-                    pageable: true,
-                    sortable: true,
-                    filterable: true,
-                    dataBound: onDataBound,
-                    columns: [{
-                      field: "Metric",
-                      title: "Metric",
-                      width: 100
-                  }, {
-                      field: "Count",
-                      title: "Count",
-                      attributes:{class:"gridnumbercolumn"},
-                      width: 100
-                  },{
-                    field: "Goal",
-                    title: "Goal",
-                    width: 100
-                  },{
-                    field: "Remark",
-                    title: "Remark",
-                    template: "<span id='m_badge_#=Metric#' class='badgeTemplate'></span>",
-                    width: 100
-                  }]
+                    $(this).find(".badgeTemplate").kendoBadge({
+                        themeColor: themeColor,
+                        text: text,
+                    });
+                    kendo.bind($(this), dataItem);
                 });
+             }
+
+              var Mil_Metrics_data = {{ dict_Mil_Metrics|tojson|safe }};
+
+              $("#mil-metrics-grid").kendoGrid({
+                  dataSource: {
+                    data: Mil_Metrics_data,
+                    schema: {
+                      model: {
+                          fields: {
+                              Metric: { type: "string" },
+                              Count: { type: "number" },
+                              Goal: { type: "string" },
+                              Remark: { type: "string" }
+                          }
+                      }
+                    },
+                    pageSize: 50
+                  },
+                  toolbar: kendo.template($("#mmt-template").html()),
+                  pageable: true,
+                  sortable: true,
+                  filterable: true,
+                  dataBound: onDataBound,
+                  columns: [{
+                    field: "Metric",
+                    title: "Metric",
+                    width: 100
+                }, {
+                    field: "Count",
+                    title: "Count",
+                    attributes:{class:"gridnumbercolumn"},
+                    width: 100
+                },{
+                  field: "Goal",
+                  title: "Goal",
+                  width: 100
+                },{
+                  field: "Remark",
+                  title: "Remark",
+                  template: "<span id='m_badge_#=Metric#' class='badgeTemplate'></span>",
+                  width: 100
+                }]
+              });
 
             });
           </script>
@@ -815,6 +792,8 @@
     margin: 8px;
     border: 0;
     background: none;
+    width: 100%;
+    height: 100%;
   }
 
   #tabstrip .k-tabstrip- {

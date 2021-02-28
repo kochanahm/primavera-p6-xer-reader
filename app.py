@@ -5,6 +5,7 @@ from graphviz import Digraph
 from _PathPrintClass import Graph
 from flask import Flask, render_template, request, redirect, abort, flash, url_for, jsonify
 from werkzeug.utils import secure_filename
+from werkzeug.urls import url_parse
 import plotly
 import plotly.graph_objects as go
 import networkx as nx
@@ -17,12 +18,16 @@ import config
 
 app = Flask(__name__, static_url_path="/static", static_folder="/static")
 
+list_Diagnostic_Results = []
+
+
 @app.route('/')
 def home():
     return render_template('upload.html')
 
 @app.route('/navpanel', methods=['POST', 'GET'])
 def navpanel():
+
     # Get selected project id from project selection page
     selected_project_id = str(request.form.get('project_selector'))
 
@@ -41,8 +46,10 @@ def navpanel():
     dict_sm_nonlabours = modules.calcStatistics.create_nonlabunits_table()
     dict_float_metrics = modules.calcStatistics.create_float_table()[0]
     dict_float_dist = modules.calcStatistics.create_float_table()[1]
-    dict_Task_Metrics = modules.calcDiagnostics.funcDiagnostics()[0]
-    dict_Mil_Metrics = modules.calcDiagnostics.funcDiagnostics()[1]
+    list_temp_diagnostics = modules.calcDiagnostics.funcDiagnostics()
+    list_Diagnostic_Results.extend(list_temp_diagnostics)
+    dict_Task_Metrics = list_temp_diagnostics[0]
+    dict_Mil_Metrics = list_temp_diagnostics[1]
 
     if (dict_sm_costs[3]['Cost']) == 0:
         my_cost_progress = [0, 100]
@@ -128,13 +135,15 @@ def graphviz():
     cnt_total_paths = modules.drawGraphviz.generateGraphviz(selected_start_task_int, selected_end_task_int)[1]
     return render_template('graphviz.html', gp_final=gp_final, cnt_total_paths=cnt_total_paths)
 
-@app.route('/task-metrics')
+@app.route('/task-metrics', methods=['POST', 'GET'])
 def task_metrics():
-    return render_template('task-metrics.html')
+    dict_Task_Metrics_Detail = list_Diagnostic_Results[2] 
+    return render_template('task-metrics.html', dict_Task_Metrics_Detail = dict_Task_Metrics_Detail )
 
-@app.route('/mil-metrics')
+@app.route('/mil-metrics', methods=['POST', 'GET'])
 def mil_metrics():
-    return render_template('mil-metrics.html')
+    dict_Mil_Metrics_Detail = list_Diagnostic_Results[3]
+    return render_template('mil-metrics.html', dict_Mil_Metrics_Detail = dict_Mil_Metrics_Detail )
 
 if __name__ == '__main__':
     app.run(debug=True)

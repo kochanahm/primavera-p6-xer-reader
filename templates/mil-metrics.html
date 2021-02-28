@@ -5,89 +5,968 @@
     <div id="toolbar"></div>
     <div id="drawer">
       <div id="drawer-content">
-        <div id="Calendar" class="hidden">
-          <ul>
-            <li>
-              <h6>11/5 Monday</h6>
-              <p>Martha Birthday</p>
-            </li>
-            <li>
-              <h6>15/6 Sunday</h6>
-              <p>Job interview for internal position</p>
-            </li>
-            <div id="example">
-              <div class="demo-section">
-                <ul class="k-listgroup">
-                  <li class="k-listgroup-item">
-                    <a href="#" class="k-link"
-                      >Inbox <span id="badge-inbox">100</span></a
-                    >
-                  </li>
-                  <li class="k-listgroup-item">
-                    <a href="#" class="k-link"
-                      >Sent Items <span id="badge-sent">15</span></a
-                    >
-                  </li>
-                  <li class="k-listgroup-item">
-                    <a href="#" class="k-link"
-                      >Missed conversations
-                      <span id="badge-missed">120</span></a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <div id="MissingPredecessors">
+          <script id="mp-grid-template" type="text/x-kendo-template">
+            <div id="mp-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="mp-grid"></div>
+          </div>
+          <script>
+            $(function () {
 
-            <script>
-              $("#badge-inbox").kendoBadge({
-                themeColor: "info",
-                text: 100,
-                max: 99,
-              });
+                $("#kendoVersion").text(kendo.version);
 
-              $("#badge-sent").kendoBadge({
-                themeColor: "success",
-                data: {
-                  items: 15,
-                },
-                template: "#= items # items",
-              });
+                var mp_data = {{ dict_Mil_Metrics_Detail['MP']|tojson|safe }};
 
-              $("#badge-missed").kendoBadge({
-                themeColor: "warning",
-                data: {
-                  missed: 120,
-                },
-                template: '#= missed > 100 ? "a lot" : missed #',
-              });
-            </script>
-
-            <style>
-              #example .k-listgroup .k-link {
-                justify-content: space-between;
-              }
-              #example .k-listgroup .k-link:hover {
-                background-color: #555;
-                color: white;
-              }
-            </style>
-          </ul>
+                $("#mp-grid").kendoGrid({
+                    dataSource: {
+                      data: mp_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                  }]
+                });
+            });
+          </script>
         </div>
-        <div id="Attachments" class="hidden">
-          <ul>
-            <li>Build enterprise apps</li>
-            <li>Fw: Regarding Multiline textbox</li>
-            <li>Away next week</li>
-            <li>Fw: Your Costume is ready</li>
-            <li>Update completed</li>
-          </ul>
+        <div id="MissingSuccessors" class="hidden">
+          <script id="ms-grid-template" type="text/x-kendo-template">
+            <div id="ms-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="ms-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var ms_data = {{ dict_Mil_Metrics_Detail['MS']|tojson|safe }};
+
+                $("#ms-grid").kendoGrid({
+                    dataSource: {
+                      data: ms_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                  }]
+                });
+            });
+          </script>
         </div>
-        <div id="Favourites" class="hidden">
-          <ul>
-            <li>90% Discount!</li>
-            <li>90% Discount!</li>
-            <li>One time offer!</li>
-          </ul>
+        <div id="NegativeLags" class="hidden">
+          <script id="nl-grid-template" type="text/x-kendo-template">
+            <div id="nl-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="nl-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var nl_data = {{ dict_Mil_Metrics_Detail['NL']|tojson|safe }};
+
+                $("#nl-grid").kendoGrid({
+                    dataSource: {
+                      data: nl_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                pred_task_code: { type: "string" },
+                                pred_task_name: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                pred_type: { type: "string" },
+                                lag_day_cnt: { type: "number" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    resizable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "pred_task_code",
+                        title: "Predecessor ID",
+                        width: 80
+                    }, {
+                        field: "pred_task_name",
+                        title: "Predecessor Name",
+                        width: 150
+                    },{
+                      field: "task_code",
+                      title: "Successor ID",
+                      width: 80
+                    },{
+                      field: "task_name",
+                      title: "Successor Name",
+                      width: 150
+                    },{
+                      field: "pred_type",
+                      title: "Link Type",
+                      width: 30
+                    },{
+                      field: "lag_day_cnt",
+                      title: "Lag (day)",
+                      attributes:{class:"gridnumbercolumn"},
+                      width: 30
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="PositiveLags" class="hidden">
+          <script id="pl-grid-template" type="text/x-kendo-template">
+            <div id="pl-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="pl-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var pl_data = {{ dict_Mil_Metrics_Detail['PL']|tojson|safe }};
+
+                $("#pl-grid").kendoGrid({
+                    dataSource: {
+                      data: pl_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                pred_task_code: { type: "string" },
+                                pred_task_name: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                pred_type: { type: "string" },
+                                lag_day_cnt: { type: "number" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    resizable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "pred_task_code",
+                        title: "Predecessor ID",
+                        width: 80
+                    }, {
+                        field: "pred_task_name",
+                        title: "Predecessor Name",
+                        width: 150
+                    },{
+                      field: "task_code",
+                      title: "Successor ID",
+                      width: 80
+                    },{
+                      field: "task_name",
+                      title: "Successor Name",
+                      width: 150
+                    },{
+                      field: "pred_type",
+                      title: "Link Type",
+                      width: 30
+                    },{
+                      field: "lag_day_cnt",
+                      title: "Lag (day)",
+                      attributes:{class:"gridnumbercolumn"},
+                      width: 30
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="FSLinks" class="hidden">
+          <script id="fs-grid-template" type="text/x-kendo-template">
+            <div id="fs-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="fs-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var fs_data = {{ dict_Mil_Metrics_Detail['FS']|tojson|safe }};
+
+                $("#fs-grid").kendoGrid({
+                    dataSource: {
+                      data: fs_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                pred_task_code: { type: "string" },
+                                pred_task_name: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                pred_type: { type: "string" },
+                                lag_day_cnt: { type: "number" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    resizable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "pred_task_code",
+                        title: "Predecessor ID",
+                        width: 80
+                    }, {
+                        field: "pred_task_name",
+                        title: "Predecessor Name",
+                        width: 150
+                    },{
+                      field: "task_code",
+                      title: "Successor ID",
+                      width: 80
+                    },{
+                      field: "task_name",
+                      title: "Successor Name",
+                      width: 150
+                    },{
+                      field: "pred_type",
+                      title: "Link Type",
+                      width: 30
+                    },{
+                      field: "lag_day_cnt",
+                      title: "Lag (day)",
+                      attributes:{class:"gridnumbercolumn"},
+                      width: 30
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="SS-FFLinks" class="hidden">
+          <script id="ssff-grid-template" type="text/x-kendo-template">
+            <div id="ssff-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="ssff-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var ssff_data = {{ dict_Mil_Metrics_Detail['SS_FF']|tojson|safe }};
+
+                $("#ssff-grid").kendoGrid({
+                    dataSource: {
+                      data: ssff_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                pred_task_code: { type: "string" },
+                                pred_task_name: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                pred_type: { type: "string" },
+                                lag_day_cnt: { type: "number" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    resizable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "pred_task_code",
+                        title: "Predecessor ID",
+                        width: 80
+                    }, {
+                        field: "pred_task_name",
+                        title: "Predecessor Name",
+                        width: 150
+                    },{
+                      field: "task_code",
+                      title: "Successor ID",
+                      width: 80
+                    },{
+                      field: "task_name",
+                      title: "Successor Name",
+                      width: 150
+                    },{
+                      field: "pred_type",
+                      title: "Link Type",
+                      width: 30
+                    },{
+                      field: "lag_day_cnt",
+                      title: "Lag (day)",
+                      attributes:{class:"gridnumbercolumn"},
+                      width: 30
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="SFLinks" class="hidden">
+          <script id="sf-grid-template" type="text/x-kendo-template">
+            <div id="sf-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="sf-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var sf_data = {{ dict_Mil_Metrics_Detail['SF']|tojson|safe }};
+
+                $("#sf-grid").kendoGrid({
+                    dataSource: {
+                      data: sf_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                pred_task_code: { type: "string" },
+                                pred_task_name: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                pred_type: { type: "string" },
+                                lag_day_cnt: { type: "number" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    resizable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "pred_task_code",
+                        title: "Predecessor ID",
+                        width: 80
+                    }, {
+                        field: "pred_task_name",
+                        title: "Predecessor Name",
+                        width: 150
+                    },{
+                      field: "task_code",
+                      title: "Successor ID",
+                      width: 80
+                    },{
+                      field: "task_name",
+                      title: "Successor Name",
+                      width: 150
+                    },{
+                      field: "pred_type",
+                      title: "Link Type",
+                      width: 30
+                    },{
+                      field: "lag_day_cnt",
+                      title: "Lag (day)",
+                      attributes:{class:"gridnumbercolumn"},
+                      width: 30
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="HardConstraints" class="hidden">
+          <script id="hc-grid-template" type="text/x-kendo-template">
+            <div id="hc-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="hc-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var hc_data = {{ dict_Mil_Metrics_Detail['HC']|tojson|safe }};
+
+                $("#hc-grid").kendoGrid({
+                    dataSource: {
+                      data: hc_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" },
+                                cstr_type: { type: "string" },
+                                cstr_type2: { type: "string" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                    },{
+                      field: "cstr_type",
+                      title: "Primary Constraint",
+                      width: 100
+                    },{
+                      field: "cstr_type2",
+                      title: "Secondary Constraint",
+                      width: 100
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="HighFloats" class="hidden">
+          <script id="hf-grid-template" type="text/x-kendo-template">
+            <div id="hf-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="hf-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var hf_data = {{ dict_Mil_Metrics_Detail['HF']|tojson|safe }};
+
+                $("#hf-grid").kendoGrid({
+                    dataSource: {
+                      data: hf_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" },
+                                total_float_day_cnt: { type: "number" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                    },{
+                      field: "total_float_day_cnt",
+                      title: "Total Float (d)",
+                      attributes:{class:"gridnumbercolumn"},
+                      width: 100
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="NegativeFloats" class="hidden">
+          <script id="nf-grid-template" type="text/x-kendo-template">
+            <div id="nf-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="nf-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var nf_data = {{ dict_Mil_Metrics_Detail['NF']|tojson|safe }};
+
+                $("#nf-grid").kendoGrid({
+                    dataSource: {
+                      data: nf_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" },
+                                total_float_day_cnt: { type: "number" }
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                    },{
+                      field: "total_float_day_cnt",
+                      title: "Total Float (d)",
+                      attributes:{class:"gridnumbercolumn"},
+                      width: 100
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="InvalidActualStart" class="hidden">
+          <script id="ias-grid-template" type="text/x-kendo-template">
+            <div id="ias-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="ias-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var ias_data = {{ dict_Mil_Metrics_Detail['IAS']|tojson|safe }};
+
+                $("#ias-grid").kendoGrid({
+                    dataSource: {
+                      data: ias_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" },
+                                act_start_date: { type: "string" }, // TODO : CHANGE IT TO DATETIME LATER
+                                act_end_date: { type: "string" },  // TODO : CHANGE IT TO DATETIME LATER
+                                early_start_date: { type: "string" },  // TODO : CHANGE IT TO DATETIME LATER
+                                early_end_date: { type: "string" }  // TODO : CHANGE IT TO DATETIME LATER
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                    },{
+                      field: "act_start_date",
+                      title: "Actual Start Date",
+                      width: 100
+                    },{
+                      field: "act_end_date",
+                      title: "Actual Finish Date",
+                      width: 100
+                    },{
+                      field: "early_start_date",
+                      title: "Early Start Date",
+                      width: 100
+                    },{
+                      field: "early_end_date",
+                      title: "Early Finish Date",
+                      width: 100
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="InvalidActualFinish" class="hidden">
+          <script id="iaf-grid-template" type="text/x-kendo-template">
+            <div id="iaf-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="iaf-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var iaf_data = {{ dict_Mil_Metrics_Detail['IAF']|tojson|safe }};
+
+                $("#iaf-grid").kendoGrid({
+                    dataSource: {
+                      data: iaf_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" },
+                                act_start_date: { type: "string" }, // TODO : CHANGE IT TO DATETIME LATER
+                                act_end_date: { type: "string" },  // TODO : CHANGE IT TO DATETIME LATER
+                                early_start_date: { type: "string" },  // TODO : CHANGE IT TO DATETIME LATER
+                                early_end_date: { type: "string" }  // TODO : CHANGE IT TO DATETIME LATER
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                    },{
+                      field: "act_start_date",
+                      title: "Actual Start Date",
+                      width: 100
+                    },{
+                      field: "act_end_date",
+                      title: "Actual Finish Date",
+                      width: 100
+                    },{
+                      field: "early_start_date",
+                      title: "Early Start Date",
+                      width: 100
+                    },{
+                      field: "early_end_date",
+                      title: "Early Finish Date",
+                      width: 100
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="InvalidForecastStart" class="hidden">
+          <script id="ifs-grid-template" type="text/x-kendo-template">
+            <div id="ifs-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="ifs-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var ifs_data = {{ dict_Mil_Metrics_Detail['IFS']|tojson|safe }};
+
+                $("#ifs-grid").kendoGrid({
+                    dataSource: {
+                      data: ifs_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" },
+                                act_start_date: { type: "string" }, // TODO : CHANGE IT TO DATETIME LATER
+                                act_end_date: { type: "string" },  // TODO : CHANGE IT TO DATETIME LATER
+                                early_start_date: { type: "string" },  // TODO : CHANGE IT TO DATETIME LATER
+                                early_end_date: { type: "string" }  // TODO : CHANGE IT TO DATETIME LATER
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                    },{
+                      field: "act_start_date",
+                      title: "Actual Start Date",
+                      width: 100
+                    },{
+                      field: "act_end_date",
+                      title: "Actual Finish Date",
+                      width: 100
+                    },{
+                      field: "early_start_date",
+                      title: "Early Start Date",
+                      width: 100
+                    },{
+                      field: "early_end_date",
+                      title: "Early Finish Date",
+                      width: 100
+                    }]
+                });
+            });
+          </script>
+        </div>
+        <div id="InvalidForecastFinish" class="hidden">
+          <script id="iff-grid-template" type="text/x-kendo-template">
+            <div id="iff-grid" style="height:100%;"></div>
+          </script>
+          <div>
+            <div id="iff-grid"></div>
+          </div>
+          <script>
+            $(function () {
+
+                $("#kendoVersion").text(kendo.version);
+
+                var iff_data = {{ dict_Mil_Metrics_Detail['IFF']|tojson|safe }};
+
+                $("#iff-grid").kendoGrid({
+                    dataSource: {
+                      data: iff_data,
+                      schema: {
+                        model: {
+                            fields: {
+                                task_id: { type: "string" },
+                                task_code: { type: "string" },
+                                task_name: { type: "string" },
+                                status_code: { type: "string" },
+                                task_type: { type: "string" },
+                                act_start_date: { type: "string" }, // TODO : CHANGE IT TO DATETIME LATER
+                                act_end_date: { type: "string" },  // TODO : CHANGE IT TO DATETIME LATER
+                                early_start_date: { type: "string" },  // TODO : CHANGE IT TO DATETIME LATER
+                                early_end_date: { type: "string" }  // TODO : CHANGE IT TO DATETIME LATER
+                            }
+                        }
+                      },
+                      pageSize: 50
+                    },
+                    pageable: true,
+                    sortable: true,
+                    filterable: true,
+                    toolbar: ["excel", "pdf", "search"],
+                    columns: [{
+                        field: "task_id",
+                        title: "ID",
+                        width: 30
+                    }, {
+                        field: "task_code",
+                        title: "Activity ID",
+                        width: 50
+                    },{
+                      field: "task_name",
+                      title: "Activity Name",
+                      width: 150
+                    },{
+                      field: "status_code",
+                      title: "Activity Status",
+                      width: 100
+                    },{
+                      field: "task_type",
+                      title: "Activity Type",
+                      width: 100
+                    },{
+                      field: "act_start_date",
+                      title: "Actual Start Date",
+                      width: 100
+                    },{
+                      field: "act_end_date",
+                      title: "Actual Finish Date",
+                      width: 100
+                    },{
+                      field: "early_start_date",
+                      title: "Early Start Date",
+                      width: 100
+                    },{
+                      field: "early_end_date",
+                      title: "Early Finish Date",
+                      width: 100
+                    }]
+                });
+            });
+          </script>
         </div>
       </div>
     </div>
@@ -98,10 +977,24 @@
     $("#drawer").kendoDrawer({
       template:
         "<ul> \
-                <li data-role='drawer-item'><span class='k-icon k-i-calendar'></span><span class='k-item-text'>Calendar</span></li> \
-                <li data-role='drawer-separator'></li> \
-                <li data-role='drawer-item'><span class='k-icon k-i-hyperlink-email'></span><span class='k-item-text'>Attachments</span></li> \
-                <li data-role='drawer-item'><span class='k-icon k-i-star-outline k-i-bookmark-outline'></span><span class='k-item-text'>Favourites</span></li> \
+                <li data-role='drawer-item' class='k-state-selected'><span class='k-icon k-i-login'></span><span class='k-item-text'>Missing Predecessors</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-login k-flip-h'></span><span class='k-item-text'>Missing Successors</span></li> \
+                 <li data-role='drawer-separator'></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-minus'></span><span class='k-item-text'>Negative Lags</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-plus'></span><span class='k-item-text'>Positive Lags</span></li> \
+                 <li data-role='drawer-separator'></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-arrow-end-right'></span><span class='k-item-text'>FS Links</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-arrow-seek-right'></span><span class='k-item-text'>SS-FF Links</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-arrow-end-left'></span><span class='k-item-text'>SF Links</span></li> \
+                 <li data-role='drawer-separator'></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-pin'></span><span class='k-item-text'>Hard Constraints</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-greater-or-equal'></span><span class='k-item-text'>High Floats</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-less-or-equal'></span><span class='k-item-text'>Negative Floats</span></li> \
+                 <li data-role='drawer-separator'></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-justify-start-horizontal'></span><span class='k-item-text'>Invalid Actual Start</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-justify-end-horizontal'></span><span class='k-item-text'>Invalid Actual Finish</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-align-left-element'></span><span class='k-item-text'>Invalid Forecast Start</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-align-right-element'></span><span class='k-item-text'>Invalid Forecast Finish</span></li> \
               </ul>",
       mode: "push",
       mini: true,
@@ -112,7 +1005,7 @@
             .addClass("hidden");
           e.sender.drawerContainer
             .find("#drawer-content")
-            .find("#" + e.item.find(".k-item-text").text())
+            .find("#" + e.item.find(".k-item-text").text().replace(/ /g, ""))
             .removeClass("hidden");
         }
       },
@@ -141,7 +1034,7 @@
         attributes: { class: "k-flat" },
         click: toggleDrawer,
       },
-      { template: "<h3 style='margin-left: 20px;'>Milestone Metrics</h3>" },
+      { template: "<h3 style='margin-left: 20px;'>Task Metrics</h3>" },
     ],
   });
 </script>
@@ -180,6 +1073,10 @@
 
   .k-card-body {
     overflow: hidden;
+  }
+
+  .gridnumbercolumn {
+    text-align: right;
   }
 </style>
 {% endblock content %}

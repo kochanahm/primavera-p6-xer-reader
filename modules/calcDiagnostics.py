@@ -2,7 +2,8 @@ import pandas as pd
 import datetime
 import config
 import modules.calcStatistics
-from flask import url_for
+from flask import url_for, jsonify
+import json
 
 # Create Links Table and Count Diagnostics
 def funcDiagnostics():
@@ -276,10 +277,10 @@ def funcDiagnostics():
     ## Get only required fileds from TASK
     df_task_invdt = df_task[['task_id', 'task_code', 'task_name','status_code','task_type','act_start_date','act_end_date','early_start_date','early_end_date']]
     ## Convert strings to datetime format in order to compare with data date
-    df_task_invdt['act_start_date'] = pd.to_datetime(df_task_invdt['act_start_date'], format='%d-%b-%Y %H:%M')
-    df_task_invdt['act_end_date'] = pd.to_datetime(df_task_invdt['act_end_date'], format='%d-%b-%Y %H:%M')
-    df_task_invdt['early_start_date'] = pd.to_datetime(df_task_invdt['early_start_date'], format='%d-%b-%Y %H:%M')
-    df_task_invdt['early_end_date'] = pd.to_datetime(df_task_invdt['early_end_date'], format='%d-%b-%Y %H:%M')
+    df_task_invdt['act_start_date'] = pd.to_datetime(df_task_invdt['act_start_date'], format='%Y-%m-%d %H:%M')
+    df_task_invdt['act_end_date'] = pd.to_datetime(df_task_invdt['act_end_date'], format='%Y-%m-%d %H:%M')
+    df_task_invdt['early_start_date'] = pd.to_datetime(df_task_invdt['early_start_date'], format='%Y-%m-%d %H:%M')
+    df_task_invdt['early_end_date'] = pd.to_datetime(df_task_invdt['early_end_date'], format='%Y-%m-%d %H:%M')
     ## Get data date from other module
     prj_data_date = modules.calcStatistics.find_data_date()[2]
     ## Filter for tasks that have Invalid Actual Start dates
@@ -351,21 +352,6 @@ def funcDiagnostics():
     percent_IFS = 0 if cnt_Total_Tasks_IT==0 else cnt_task_ifs/cnt_Total_Tasks_IT
     percent_IFF = 0 if cnt_Total_Tasks_IT==0 else cnt_task_iff/cnt_Total_Tasks_IT
     percent_NAR = 0 if cnt_Total_Tasks_IT==0 else cnt_task_no_rsrc/cnt_Total_Tasks_IT
-
-    # m_percent_MP = 0 if cnt_Total_Tasks_IM==0 else cnt_Missing_Pred_IM/cnt_Total_Tasks_IM
-    # m_percent_MS = 0 if cnt_Total_Tasks_IM==0 else cnt_Missing_Suc_IM/cnt_Total_Tasks_IM
-    # m_percent_NL = 0 if cnt_Total_Tasks_IM==0 else cnt_Negative_Lags_IM/cnt_Total_Tasks_IM
-    # m_percent_PL = 0 if cnt_Total_Tasks_IM==0 else cnt_Positive_Lags_IM/cnt_Total_Tasks_IM
-    # m_percent_FS = 0 if cnt_Total_Links_IM==0 else cnt_FS_links_IM/cnt_Total_Links_IM
-    # m_percent_SS_FF = 0 if cnt_Total_Links_IM==0 else cnt_SS_FF_links_IM/(2*cnt_Total_Links_IM)
-    # m_percent_SF = 0 if cnt_Total_Links_IM==0 else cnt_SF_links_IM/cnt_Total_Links_IM
-    # m_percent_HC = 0 if cnt_Total_Tasks_IM==0 else cnt_hard_const_IM/cnt_Total_Tasks_IM
-    # m_percent_HF = 0 if cnt_Total_Tasks_IM==0 else cnt_High_Floats_IM/cnt_Total_Tasks_IM
-    # m_percent_NF = 0 if cnt_Total_Tasks_IM==0 else cnt_Negative_Floats_IM/cnt_Total_Tasks_IM
-    # m_percent_IAS = 0 if cnt_Total_Tasks_IM==0 else cnt_mil_ias/cnt_Total_Tasks_IM
-    # m_percent_IAF = 0 if cnt_Total_Tasks_IM==0 else cnt_mil_iaf/cnt_Total_Tasks_IM
-    # m_percent_IFS = 0 if cnt_Total_Tasks_IM==0 else cnt_mil_ifs/cnt_Total_Tasks_IM
-    # m_percent_IFF = 0 if cnt_Total_Tasks_IM==0 else cnt_mil_iff/cnt_Total_Tasks_IM
 
 
     dict_Task_Metrics = [
@@ -544,7 +530,64 @@ def funcDiagnostics():
         'Remark': 'Good' if cnt_mil_iff == 0 else 'Check'
         }]
     
+    percent_MP = 0 if cnt_Total_Tasks_IT==0 else cnt_Missing_Pred_IT/cnt_Total_Tasks_IT
+    percent_MS = 0 if cnt_Total_Tasks_IT==0 else cnt_Missing_Suc_IT/cnt_Total_Tasks_IT
+    percent_NL = 0 if cnt_Total_Tasks_IT==0 else cnt_Negative_Lags_IT/cnt_Total_Tasks_IT
+    percent_PL = 0 if cnt_Total_Tasks_IT==0 else cnt_Positive_Lags_IT/cnt_Total_Tasks_IT
+    percent_FS = 0 if cnt_Total_Links_IT==0 else cnt_FS_links_IT/cnt_Total_Links_IT
+    percent_SS_FF = 0 if cnt_Total_Links_IT==0 else cnt_SS_FF_links_IT/(2*cnt_Total_Links_IT)
+    percent_SF = 0 if cnt_Total_Links_IT==0 else cnt_SF_links_IT/cnt_Total_Links_IT
+    percent_HC = 0 if cnt_Total_Tasks_IT==0 else cnt_hard_const_IT/cnt_Total_Tasks_IT
+    percent_HF = 0 if cnt_Total_Tasks_IT==0 else cnt_High_Floats_IT/cnt_Total_Tasks_IT
+    percent_NF = 0 if cnt_Total_Tasks_IT==0 else cnt_Negative_Floats_IT/cnt_Total_Tasks_IT
+    percent_HOD = 0 if cnt_Total_Tasks_IT==0 else cnt_high_org_drt_IT/cnt_Total_Tasks_IT
+    percent_HRD = 0 if cnt_Total_Tasks_IT==0 else cnt_high_rem_drt_IT/cnt_Total_Tasks_IT
+    percent_IAS = 0 if cnt_Total_Tasks_IT==0 else cnt_task_ias/cnt_Total_Tasks_IT
+    percent_IAF = 0 if cnt_Total_Tasks_IT==0 else cnt_task_iaf/cnt_Total_Tasks_IT
+    percent_IFS = 0 if cnt_Total_Tasks_IT==0 else cnt_task_ifs/cnt_Total_Tasks_IT
+    percent_IFF = 0 if cnt_Total_Tasks_IT==0 else cnt_task_iff/cnt_Total_Tasks_IT
+    percent_NAR = 0 if cnt_Total_Tasks_IT==0 else cnt_task_no_rsrc/cnt_Total_Tasks_IT
 
-    dict_Task_Metrics_Detail = [{'Category': 'Missing Predecessors', 'Data': df_Missing_Pred_IT.to_dict(orient='records')}]
+    dict_Task_Metrics_Detail = {
+        'MP': json.loads(df_Missing_Pred_IT.to_json(orient='records')),
+        'MS': json.loads(df_Missing_Suc_IT.to_json(orient='records')),
+        'NL': json.loads(df_Negative_Lags_IT.to_json(orient='records')),
+        'PL': json.loads(df_Positive_Lags_IT.to_json(orient='records')),
+        'FS': json.loads(df_FS_links_IT.to_json(orient='records')),
+        'SS_FF': json.loads(df_SS_FF_links_IT.to_json(orient='records')),
+        'SF': json.loads(df_SF_links_IT.to_json(orient='records')),
+        'HC': json.loads(df_hard_const_IT.to_json(orient='records')),
+        'HF': json.loads(df_High_Floats_IT.to_json(orient='records')),
+        'NF': json.loads(df_Negative_Floats_IT.to_json(orient='records')),
+        'HOD': json.loads(df_high_org_drt_IT.to_json(orient='records')),
+        'HRD': json.loads(df_high_rem_drt_IT.to_json(orient='records')),
+        'IAS': json.loads(df_task_ias.to_json(orient='records')),
+        'IAF': json.loads(df_task_iaf.to_json(orient='records')),
+        'IFS': json.loads(df_task_ifs.to_json(orient='records')),
+        'IFF': json.loads(df_task_iff.to_json(orient='records')),
+        'NAR': json.loads(df_task_no_rsrc.to_json(orient='records'))
+        }
 
-    return dict_Task_Metrics, dict_Mil_Metrics
+    dict_Mil_Metrics_Detail = {
+        'MP': json.loads(df_Missing_Pred_IM.to_json(orient='records')),
+        'MS': json.loads(df_Missing_Suc_IM.to_json(orient='records')),
+        'NL': json.loads(df_Negative_Lags_IM.to_json(orient='records')),
+        'PL': json.loads(df_Positive_Lags_IM.to_json(orient='records')),
+        'FS': json.loads(df_FS_links_IM.to_json(orient='records')),
+        'SS_FF': json.loads(df_SS_FF_links_IM.to_json(orient='records')),
+        'SF': json.loads(df_SF_links_IM.to_json(orient='records')),
+        'HC': json.loads(df_hard_const_IM.to_json(orient='records')),
+        'HF': json.loads(df_High_Floats_IM.to_json(orient='records')),
+        'NF': json.loads(df_Negative_Floats_IM.to_json(orient='records')),
+        'IAS': json.loads(df_mil_ias.to_json(orient='records')),
+        'IAF': json.loads(df_mil_iaf.to_json(orient='records')),
+        'IFS': json.loads(df_mil_ifs.to_json(orient='records')),
+        'IFF': json.loads(df_mil_iff.to_json(orient='records'))
+        }
+
+    # df_deneme = df_task_iaf.to_dict(orient='records')
+
+    # dict_Task_Metrics_Detail =jsonify(dict_Task_Metrics_Detail)
+    # dict_Mil_Metrics_Detail =jsonify(dict_Mil_Metrics_Detail)
+
+    return dict_Task_Metrics, dict_Mil_Metrics, dict_Task_Metrics_Detail, dict_Mil_Metrics_Detail
