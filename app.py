@@ -32,6 +32,7 @@ def navpanel():
     selected_project_id = str(request.form.get('project_selector'))
 
     modules.calcStatistics.update_my_filt_dataframes(selected_project_id) # update dataframes based on selected project id
+    modules.calcStatistics.checkTableExist() #check which tables exist in XER
 
     prj_data_date = modules.calcStatistics.find_data_date()[0]
     prj_data_date_hr = modules.calcStatistics.find_data_date()[1]
