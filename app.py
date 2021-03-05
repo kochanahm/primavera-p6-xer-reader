@@ -1,19 +1,13 @@
+import os
 import json
 import pandas as pd
 import datetime
-from graphviz import Digraph
-from _PathPrintClass import Graph
-from flask import Flask, render_template, request, redirect, abort, flash, url_for, jsonify
+from flask import Flask, render_template, request, redirect, abort, flash, url_for, jsonify,send_from_directory
 from werkzeug.utils import secure_filename
 from werkzeug.urls import url_parse
-import plotly
-import plotly.graph_objects as go
-import networkx as nx
 import modules.loadXer
 import modules.calcStatistics
 import modules.calcDiagnostics
-import modules.drawPlotly
-import modules.drawGraphviz
 import config
 
 app = Flask(__name__, static_url_path="/static", static_folder="/static")
@@ -24,6 +18,10 @@ list_Diagnostic_Results = []
 @app.route('/')
 def home():
     return render_template('upload.html')
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico')
 
 @app.route('/navpanel', methods=['POST', 'GET'])
 def navpanel():
@@ -111,30 +109,6 @@ def projectselection():
     dict_project_list = df_project_filtered.to_dict(orient='records')
     return render_template('projectselection.html', dict_project_list=dict_project_list)
 
-@app.route('/network')
-def network():
-    bar = modules.drawPlotly.create_plot()
-    return render_template('network.html', plot=bar)
-
-
-@app.route('/nodeselection', methods=['POST', 'GET'])
-def nodeselection():
-    result_list = modules.drawGraphviz.create_unique_task_list()
-    mySecDic= result_list[2]
-    df = pd.DataFrame.from_dict(mySecDic)
-    dict_task_list = df.to_dict(orient='records')
-    return render_template('nodeselection.html', dict_task_list=dict_task_list)
-
-@app.route('/graphviz', methods=['POST', 'GET'])
-def graphviz():
-
-    # Get selected task id  from node selection page
-    selected_start_task_int = str(request.form.get('start_node'))
-    selected_end_task_int = str(request.form.get('end_node'))
-
-    gp_final = modules.drawGraphviz.generateGraphviz(selected_start_task_int, selected_end_task_int)[0]
-    cnt_total_paths = modules.drawGraphviz.generateGraphviz(selected_start_task_int, selected_end_task_int)[1]
-    return render_template('graphviz.html', gp_final=gp_final, cnt_total_paths=cnt_total_paths)
 
 @app.route('/task-metrics', methods=['POST', 'GET'])
 def task_metrics():

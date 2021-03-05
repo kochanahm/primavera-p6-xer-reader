@@ -659,32 +659,14 @@
             });
           </script>
         </div>
-        <div id="Calendar" class="hidden">
+        <div id="About" class="hidden">
           <ul>
+            <li>Developed by Ahmet Kochan</li>
             <li>
-              <h6>11/5 Monday</h6>
-              <p>Martha Birthday</p>
+              <a href="https://www.linkedin.com/in/ahmetkochan"
+                >Contact via Linkedin</a
+              >
             </li>
-            <li>
-              <h6>15/6 Sunday</h6>
-              <p>Job interview for internal position</p>
-            </li>
-          </ul>
-        </div>
-        <div id="Attachments" class="hidden">
-          <ul>
-            <li>Build enterprise apps</li>
-            <li>Fw: Regarding Multiline textbox</li>
-            <li>Away next week</li>
-            <li>Fw: Your Costume is ready</li>
-            <li>Update completed</li>
-          </ul>
-        </div>
-        <div id="Favourites" class="hidden">
-          <ul>
-            <li>90% Discount!</li>
-            <li>90% Discount!</li>
-            <li>One time offer!</li>
           </ul>
         </div>
       </div>
@@ -696,13 +678,11 @@
     $("#drawer").kendoDrawer({
       template:
         "<ul> \
-                <li data-role='drawer-item' class='k-state-selected'><span class='k-icon k-i-inbox'></span><span class='k-item-text'>Statistics</span></li> \
+                <li data-role='drawer-item' class='k-state-selected'><span class='k-icon k-i-graph'></span><span class='k-item-text'>Statistics</span></li> \
                 <li data-role='drawer-separator'></li> \
                 <li data-role='drawer-item'><span class='k-icon k-i-notification k-i-bell'></span><span class='k-item-text'>Diagnostics</span></li> \
-                <li data-role='drawer-item'><span class='k-icon k-i-calendar'></span><span class='k-item-text'>Calendar</span></li> \
                 <li data-role='drawer-separator'></li> \
-                <li data-role='drawer-item'><span class='k-icon k-i-hyperlink-email'></span><span class='k-item-text'>Attachments</span></li> \
-                <li data-role='drawer-item'><span class='k-icon k-i-star-outline k-i-bookmark-outline'></span><span class='k-item-text'>Favourites</span></li> \
+                <li data-role='drawer-item'><span class='k-icon k-i-information'></span><span class='k-item-text'>About</span></li> \
               </ul>",
       mode: "push",
       mini: true,
@@ -742,7 +722,7 @@
         attributes: { class: "k-flat" },
         click: toggleDrawer,
       },
-      { template: "<h3 style='margin-left: 20px;'>Schedule Manager</h3>" },
+      { template: "<h3 style='margin-left: 20px;'>P6 XER Reader</h3>" },
     ],
   });
 
