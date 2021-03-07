@@ -1,8 +1,7 @@
-import os
 import json
 import pandas as pd
 import datetime
-from flask import Flask, render_template, request, redirect, abort, flash, url_for, jsonify,send_from_directory
+from flask import Flask, render_template, request, redirect, abort, flash, url_for, jsonify
 from werkzeug.utils import secure_filename
 from werkzeug.urls import url_parse
 import modules.loadXer
@@ -19,9 +18,6 @@ list_Diagnostic_Results = []
 def home():
     return render_template('upload.html')
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico')
 
 @app.route('/navpanel', methods=['POST', 'GET'])
 def navpanel():
