@@ -1,6 +1,6 @@
 import pandas as pd
 import datetime
-import config
+import app
 
 # Check the existence of tables in XER file
 isTaskExist = False
@@ -18,28 +18,28 @@ def checkTableExist():
     global isSchedOptionsExist
     global isProjectExist
 
-    isTaskExist = True if 'TASK' in config.my_filt_dataframes.keys() else False
-    isTaskPredExist = True if 'TASKPRED' in config.my_filt_dataframes.keys() else False
-    isCalendarExist = True if 'CALENDAR' in config.my_filt_dataframes.keys() else False
-    isTaskRsrcExist = True if 'TASKRSRC' in config.my_filt_dataframes.keys() else False
-    isSchedOptionsExist = True if 'SCHEDOPTIONS' in config.my_filt_dataframes.keys() else False
-    isProjectExist = True if 'PROJECT' in config.my_filt_dataframes.keys() else False
+    isTaskExist = True if 'TASK' in app.my_filt_dataframes.keys() else False
+    isTaskPredExist = True if 'TASKPRED' in app.my_filt_dataframes.keys() else False
+    isCalendarExist = True if 'CALENDAR' in app.my_filt_dataframes.keys() else False
+    isTaskRsrcExist = True if 'TASKRSRC' in app.my_filt_dataframes.keys() else False
+    isSchedOptionsExist = True if 'SCHEDOPTIONS' in app.my_filt_dataframes.keys() else False
+    isProjectExist = True if 'PROJECT' in app.my_filt_dataframes.keys() else False
 
 
 # Filter original my_dataframes by selectd proj id and store it in my_filt_dataframes dict
 def update_my_filt_dataframes(selected_project_id):
-    for tblName, myDf in config.my_dataframes.items():
+    for tblName, myDf in app.my_dataframes.items():
         if 'proj_id' in myDf.columns:
             df_new = myDf.loc[(myDf['proj_id'] == selected_project_id) | (myDf['proj_id'].isnull())]
-            config.my_filt_dataframes[tblName] = df_new
+            app.my_filt_dataframes[tblName] = df_new
         else:
-            config.my_filt_dataframes[tblName] = myDf
+            app.my_filt_dataframes[tblName] = myDf
 
 
 # Find data date
 def find_data_date():
     if isProjectExist:
-        df_project = config.my_filt_dataframes['PROJECT']
+        df_project = app.my_filt_dataframes['PROJECT']
         prj_data_date_str = df_project.iloc[0]['last_recalc_date']
     else:
         prj_data_date_str = "1900-01-01 00:00"
@@ -53,7 +53,7 @@ def find_data_date():
 # Find project start date
 def find_proj_start_date():
     if isTaskExist:
-        df_task = config.my_filt_dataframes['TASK']
+        df_task = app.my_filt_dataframes['TASK']
         df_task['act_start_date'] = pd.to_datetime(df_task['act_start_date'])
         df_micro1 = df_task.loc[(df_task['task_type'] == 'TT_Task') &
                                 (df_task['act_start_date'].notnull()) &
@@ -89,7 +89,7 @@ def find_proj_start_date():
 # Find project end date
 def find_proj_end_date():
     if isTaskExist:
-        df_task = config.my_filt_dataframes['TASK']
+        df_task = app.my_filt_dataframes['TASK']
         df_task['act_end_date'] = pd.to_datetime(df_task['act_end_date'])
         df_micro3 = df_task.loc[(df_task['task_type'] == 'TT_Task') &
                                 (df_task['act_end_date'].notnull()) &
@@ -125,7 +125,7 @@ def find_proj_end_date():
 # Create Task Status Table
 def create_task_status_table():
     if isTaskExist:
-        df_task = config.my_filt_dataframes['TASK']
+        df_task = app.my_filt_dataframes['TASK']
         cnt_completed_tasks = len(df_task.loc[(df_task['status_code'] == 'TK_Complete'), ['task_id']])
         cnt_inprogress_tasks = len(df_task.loc[(df_task['status_code'] == 'TK_Active'), ['task_id']])
         cnt_notstarted_tasks = len(df_task.loc[(df_task['status_code'] == 'TK_NotStart'), ['task_id']])
@@ -143,7 +143,7 @@ def create_task_status_table():
 # Create Task Type Table
 def create_task_type_table():
     if isTaskExist:
-        df_task = config.my_filt_dataframes['TASK']
+        df_task = app.my_filt_dataframes['TASK']
         cnt_task_dependent = len(df_task.loc[(df_task['task_type'] == 'TT_Task'), ['task_type']])
         cnt_wbs_summary = len(df_task.loc[(df_task['task_type'] == 'TT_WBS'), ['task_type']])
         cnt_loe = len(df_task.loc[(df_task['task_type'] == 'TT_LOE'), ['task_type']])
@@ -170,7 +170,7 @@ def create_task_type_table():
 # Create Cost Table
 def create_cost_table():
     if isTaskRsrcExist:
-        df_taskrsrc = config.my_filt_dataframes['TASKRSRC']
+        df_taskrsrc = app.my_filt_dataframes['TASKRSRC']
         df_taskrsrc[['target_cost', 'act_reg_cost', 'remain_cost']] = df_taskrsrc[
             ['target_cost', 'act_reg_cost', 'remain_cost']].apply(pd.to_numeric)
         sm_budg_cost = float(df_taskrsrc['target_cost'].sum())
@@ -193,7 +193,7 @@ def create_cost_table():
 # Create Labour Units Table
 def create_labunits_table():
     if isTaskExist:
-        df_task = config.my_filt_dataframes['TASK']
+        df_task = app.my_filt_dataframes['TASK']
         df_task[['target_work_qty', 'act_work_qty', 'remain_work_qty']] = df_task[
             ['target_work_qty', 'act_work_qty', 'remain_work_qty']].apply(pd.to_numeric)
         sm_budg_labour = float(df_task['target_work_qty'].sum())
@@ -216,7 +216,7 @@ def create_labunits_table():
 # Create Non-labour Units Table
 def create_nonlabunits_table():
     if isTaskExist:
-        df_task = config.my_filt_dataframes['TASK']
+        df_task = app.my_filt_dataframes['TASK']
         df_task[['target_equip_qty', 'act_equip_qty', 'remain_equip_qty']] = df_task[
             ['target_equip_qty', 'act_equip_qty', 'remain_equip_qty']].apply(pd.to_numeric)
         sm_budg_nonlabour = float(df_task['target_equip_qty'].sum())
@@ -240,13 +240,13 @@ def create_nonlabunits_table():
 def create_float_table():
     if isTaskExist:
         # Join Calendar and Task tables to get daily hours and convert hours to days
-        df_task = config.my_filt_dataframes['TASK']
+        df_task = app.my_filt_dataframes['TASK']
         cnt_no_float = len(df_task.loc[(df_task['total_float_hr_cnt'].isnull()), ['task_id']])
         if isCalendarExist:
-            df_calendar = config.my_filt_dataframes['CALENDAR']   
+            df_calendar = app.my_filt_dataframes['CALENDAR']   
             df_caltask = pd.merge(left=df_task, right=df_calendar, left_on='clndr_id', right_on='clndr_id')
         else:
-            df_caltask = config.my_filt_dataframes['TASK']
+            df_caltask = app.my_filt_dataframes['TASK']
             df_caltask['day_hr_cnt'] = 8
         
         df_caltask_2 = df_caltask.loc[df_caltask['total_float_hr_cnt'].notnull()]

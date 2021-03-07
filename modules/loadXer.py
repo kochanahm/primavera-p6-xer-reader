@@ -1,5 +1,5 @@
 import pandas as pd
-import config
+import app
 from flask import request
 from werkzeug.utils import secure_filename
 
@@ -16,7 +16,7 @@ def xer_to_dataframe(files):
 
         for x in tablelist:
             df = clean(grouped, x)
-            config.my_dataframes[x] = df
+            app.my_dataframes[x] = df
 
 def load_data(uploaded_file):
     df = pd.read_csv(uploaded_file, sep='\t', names=range(100), encoding='unicode_escape', dtype=str)

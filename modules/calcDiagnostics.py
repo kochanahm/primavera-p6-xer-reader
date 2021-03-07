@@ -1,6 +1,6 @@
 import pandas as pd
 import datetime
-import config
+import app
 import modules.calcStatistics
 from flask import url_for, jsonify
 import json
@@ -8,22 +8,22 @@ import json
 # Create Links Table and Count Diagnostics
 def funcDiagnostics():
     # Check the existence of tables in XER file
-    isTaskExist = True if 'TASK' in config.my_filt_dataframes.keys() else False
-    isTaskPredExist = True if 'TASKPRED' in config.my_filt_dataframes.keys() else False
-    isCalendarExist = True if 'CALENDAR' in config.my_filt_dataframes.keys() else False
-    isTaskRsrcExist = True if 'TASKRSRC' in config.my_filt_dataframes.keys() else False
-    isSchedOptionsExist = True if 'SCHEDOPTIONS' in config.my_filt_dataframes.keys() else False
-    isProjectExist = True if 'PROJECT' in config.my_filt_dataframes.keys() else False
+    isTaskExist = True if 'TASK' in app.my_filt_dataframes.keys() else False
+    isTaskPredExist = True if 'TASKPRED' in app.my_filt_dataframes.keys() else False
+    isCalendarExist = True if 'CALENDAR' in app.my_filt_dataframes.keys() else False
+    isTaskRsrcExist = True if 'TASKRSRC' in app.my_filt_dataframes.keys() else False
+    isSchedOptionsExist = True if 'SCHEDOPTIONS' in app.my_filt_dataframes.keys() else False
+    isProjectExist = True if 'PROJECT' in app.my_filt_dataframes.keys() else False
 
     # Join TASKPRED and TASK and CALENDAR tables
     if isTaskExist:
-        df_task = config.my_filt_dataframes['TASK']
+        df_task = app.my_filt_dataframes['TASK']
     if isTaskPredExist:
-        df_taskpred = config.my_filt_dataframes['TASKPRED']
+        df_taskpred = app.my_filt_dataframes['TASKPRED']
     if isCalendarExist:
-        df_calendar = config.my_filt_dataframes['CALENDAR']
+        df_calendar = app.my_filt_dataframes['CALENDAR']
     if isTaskRsrcExist:    
-        df_taskrsrc = config.my_filt_dataframes['TASKRSRC']
+        df_taskrsrc = app.my_filt_dataframes['TASKRSRC']
     if isTaskExist & isTaskPredExist:
         df_taskpred_task = pd.merge(left=df_taskpred, right=df_task, left_on='task_id', right_on='task_id')
         df_task_2 = df_task[['task_id', 'task_code', 'task_name', 'clndr_id','status_code','task_type']]
@@ -32,7 +32,7 @@ def funcDiagnostics():
 
     def check_lag_calendar():
         if isSchedOptionsExist:
-            df_schedoptions = config.my_filt_dataframes['SCHEDOPTIONS']
+            df_schedoptions = app.my_filt_dataframes['SCHEDOPTIONS']
             rcal_Used = df_schedoptions.iloc[0]['sched_calendar_on_relationship_lag'] # Find calendar for scheduling lags
             if isCalendarExist:
                 if rcal_Used == 'rcal_Successor':

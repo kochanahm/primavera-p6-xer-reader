@@ -8,10 +8,15 @@ from werkzeug.urls import url_parse
 import modules.loadXer
 import modules.calcStatistics
 import modules.calcDiagnostics
-import config
 
 app = Flask(__name__, static_url_path="/static", static_folder="/static")
 
+# this is a global dict to store each table in XER. In case multiple projects this is raw df
+my_dataframes = {}
+
+# this is filtered version for selected proj_id. Instead of putting condsition for proj_id in all queries, we fill
+# filter in the beginning and use these data frames
+my_filt_dataframes = {}
 list_Diagnostic_Results = []
 
 
@@ -101,7 +106,7 @@ def gonder():
 def projectselection():
     # df_project = config.my_dataframes['PROJECT']
     # df_project_filtered = df_project.filter(['proj_id', 'proj_short_name'], axis=1)
-    df_project = config.my_dataframes['PROJWBS']
+    df_project = my_dataframes['PROJWBS']
     df_project_filtered = df_project.loc[df_project['proj_node_flag'] == 'Y', ['proj_id', 'wbs_short_name', 'wbs_name']]
     dict_project_list = df_project_filtered.to_dict(orient='records')
     return render_template('projectselection.html', dict_project_list=dict_project_list)
