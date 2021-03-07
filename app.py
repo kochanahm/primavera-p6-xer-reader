@@ -1,3 +1,4 @@
+import os
 import json
 import pandas as pd
 import datetime
@@ -117,4 +118,5 @@ def mil_metrics():
     return render_template('mil-metrics.html', dict_Mil_Metrics_Detail = dict_Mil_Metrics_Detail )
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
