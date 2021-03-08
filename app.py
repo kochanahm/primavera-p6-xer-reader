@@ -25,7 +25,7 @@ def home():
     return render_template('upload.html')
 
 
-@app.route('/navpanel', methods=['POST', 'GET'])
+@app.route('/navpanel', methods=['POST'])
 def navpanel():
 
     # Get selected project id from project selection page
@@ -112,12 +112,12 @@ def projectselection():
     return render_template('projectselection.html', dict_project_list=dict_project_list)
 
 
-@app.route('/task-metrics', methods=['POST', 'GET'])
+@app.route('/task-metrics', methods=['GET'])
 def task_metrics():
     dict_Task_Metrics_Detail = list_Diagnostic_Results[2] 
     return render_template('task-metrics.html', dict_Task_Metrics_Detail = dict_Task_Metrics_Detail )
 
-@app.route('/mil-metrics', methods=['POST', 'GET'])
+@app.route('/mil-metrics', methods=['GET'])
 def mil_metrics():
     dict_Mil_Metrics_Detail = list_Diagnostic_Results[3]
     return render_template('mil-metrics.html', dict_Mil_Metrics_Detail = dict_Mil_Metrics_Detail )
